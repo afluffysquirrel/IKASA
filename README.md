@@ -5,17 +5,13 @@
 Make sure you have the latest version of Python installed.
 
 ```bash
-git clone <repo-url>
-```
-
-```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## Running The App
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 ## Viewing The App

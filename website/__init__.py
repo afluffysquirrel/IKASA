@@ -1,3 +1,6 @@
+import atexit
+
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
@@ -6,10 +9,19 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
+def schedule_job():
+    print("Scheduled job running.")
+    # A scheduled job to load tickets and process matches 
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(schedule_job,'interval',minutes=1)
+sched.start()
+
+atexit.register(lambda: sched.shutdown())
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
+    app.config['SECRET_KEY'] = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)
 
@@ -19,7 +31,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User, Note
+    from .models import User
 
     create_database(app)
 
