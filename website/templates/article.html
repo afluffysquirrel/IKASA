@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}
+    Article: {{articles[0].id}}
+{% endblock %}
+{% block content %}
+    <div style="width:60%; margin:0 auto;">
+        <div class="card mt-3 tab-card">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
+                <h5 class="card-title">{{articles[0].title}}</h5>
+                <p>Article ID: {{articles[0].id}}</p>
+                <hr/>
+                <b>Description</b>
+                <br/>
+                {{articles[0].body}}
+                <p></p>
+                <b>Tags</b>
+                <br/>
+                {{articles[0].tags}}
+                <p></p></p>
+                <b>Created</b>
+                <br/>
+                {{articles[0].creation_date}}
+                <hr/>
+                <a href="#" class="btn btn-primary">View attachments</a>              
+                </div>      
+            </div>
+        </div>
+    </div>
+            
+{% endblock %}
+    

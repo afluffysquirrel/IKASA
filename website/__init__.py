@@ -51,7 +51,12 @@ def create_app():
         from .models import User
         user = User.query.first()
         if user == None:
-            new_user = User(email="chris@aldred.cloud", password=generate_password_hash("admin123", method='sha256'), first_name="Chris", last_name="Aldred")
+            new_user = User(
+                email="chris@aldred.cloud",
+                password="sha256$HYEi1dfUYtJiK5ZU$0bde8f5e9a6ebb98a0a3a3d057ff84a737e2ffe877b4cd753903f7e40bf1dcbc",
+                first_name="Chris",
+                last_name="Aldred"
+                )
             s.add(new_user)
             s.commit()
         
@@ -59,8 +64,12 @@ def create_app():
         from .models import Article
         article = Article.query.first()
         if article == None:
-            new_article = Article("_init_article", "TEST BODY", user.id)
+            new_article = Article("OBIEE server 403", "Hit the DBA button", "OBIEE, Network, DBA", user.id)
+            new_article_2 = Article("OIC www-auth missing header", "Bounce OIC connectivity agent", "OIC, ", user.id)
+            new_article_3 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI xmlp, Dev", user.id)
             s.add(new_article)
+            s.add(new_article_2)
+            s.add(new_article_3)
             s.commit()
 
     return app
