@@ -32,6 +32,18 @@ def article(id):
     articles = Article.query.filter(Article.id == id)
     return render_template("article.html", user=current_user, articles=articles)
 
+@views.route('/articles/add', methods=['POST'])
+@login_required
+def add_article():
+    title = request.form.get('title')
+    body = request.form.get('description')
+    tags = request.form.get('tags')
+    new_article = Article(title, body, tags, current_user.id)
+    db.session.add(new_article)
+    db.session.commit()
+    id = new_article.id
+    return redirect(url_for('views.article', id=id))
+
 @views.route('/articles/delete/<id>', methods=['POST'])
 @login_required
 def delete_article(id):

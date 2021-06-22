@@ -66,7 +66,7 @@ def create_app():
         if article == None:
             new_article = Article("OBIEE server 403", "Hit the DBA button", "OBIEE, Network, DBA", user.id)
             new_article_2 = Article("OIC www-auth missing header", "Bounce OIC connectivity agent", "OIC, Connectivity agent", user.id)
-            new_article_3 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI xmlp, Dev", user.id)
+            new_article_3 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI XMLP, Dev", user.id)
             s.add(new_article)
             s.add(new_article_2)
             s.add(new_article_3)
