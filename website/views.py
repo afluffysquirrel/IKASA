@@ -32,6 +32,14 @@ def article(id):
     articles = Article.query.filter(Article.id == id)
     return render_template("article.html", user=current_user, articles=articles)
 
+@views.route('/articles/delete/<id>', methods=['POST'])
+@login_required
+def delete_article(id):
+    db.session.query(Article).filter(Article.id==id).delete()
+    db.session.commit()
+    flash('Article deleted', category='success')
+    return redirect(url_for('views.articles'))
+
 
 # Tickets
 @views.route('/tickets', methods=['GET'])

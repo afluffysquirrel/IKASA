@@ -22,8 +22,14 @@
                 <br/>
                 {{articles[0].creation_date}}
                 <hr/>
-                <a href="#" class="btn btn-primary">View attachments</a>              
-                </div>      
+                <a href="#" class="btn btn-primary pull-left">View attachments</a>
+                <div class="btn-toolbar pull-right" style="margin-bottom: 15px;">
+                    <a href="#" class="btn btn-secondary">Edit</a> 
+                    <div>&nbsp;&nbsp;</div>
+                    <form method="post" action="/articles/delete/{{articles[0].id}}">
+                        <input type="submit" value="Delete" class="btn btn-secondary">
+                    </form>
+                </div>
             </div>
         </div>
     </div>
