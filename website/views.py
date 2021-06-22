@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, jsonify
 from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
+from bs4 import BeautifulSoup
 from .models import Article
 from . import db
 #import json
@@ -36,8 +37,15 @@ def article(id):
 @login_required
 def add_article():
     title = request.form.get('title')
-    body = request.form.get('description')
+    body = request.form.get('editor')
     tags = request.form.get('tags')
+
+    # Sanitizing input
+    soup = BeautifulSoup(body)
+    for script_elt in soup.findAll('script'):
+        script_elt.extract()
+    body = str(soup)
+
     new_article = Article(title, body, tags, current_user.id)
     db.session.add(new_article)
     db.session.commit()

@@ -10,10 +10,9 @@
                 <h5 class="card-title">{{articles[0].title}}</h5>
                 <p>Article ID: {{articles[0].id}}</p>
                 <hr/>
-                <b>Description</b>
-                <br/>
-                {{articles[0].body}}
+                {{articles[0].body|safe}} <!-- Remember to sanitise input-->
                 <p></p>
+                <hr/>
                 <b>Tags</b>
                 <br/>
                 {{articles[0].tags}}
