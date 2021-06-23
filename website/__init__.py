@@ -57,20 +57,31 @@ def create_app():
                 first_name="Chris",
                 last_name="Aldred"
                 )
+            new_user.admin_flag = True
             s.add(new_user)
             s.commit()
         
-        user = User.query.first()
-        from .models import Article
-        article = Article.query.first()
-        if article == None:
-            new_article = Article("OBIEE server 403", "Hit the DBA button", "OBIEE, Network, DBA", user.id)
-            new_article_2 = Article("OIC www-auth missing header", "Bounce OIC connectivity agent", "OIC, Connectivity agent", user.id)
-            new_article_3 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI XMLP, Dev", user.id)
-            s.add(new_article)
-            s.add(new_article_2)
-            s.add(new_article_3)
-            s.commit()
+            from .models import Article
+            article = Article.query.first()
+            if article == None:
+                new_article = Article("OBIEE server 403", "Hit the DBA button", "OBIEE, Network, DBA", new_user.id)
+                new_article_2 = Article("OIC www-auth missing header", "Bounce OIC connectivity agent", "OIC, Connectivity agent", new_user.id)
+                new_article_3 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI XMLP, Dev", new_user.id)
+                s.add(new_article)
+                s.add(new_article_2)
+                s.add(new_article_3)
+                s.commit()
+
+                new_user_2 = User(
+                email="jezza@aldred.cloud",
+                password="sha256$HYEi1dfUYtJiK5ZU$0bde8f5e9a6ebb98a0a3a3d057ff84a737e2ffe877b4cd753903f7e40bf1dcbc",
+                first_name="Jezz",
+                last_name="A"
+                )
+                new_article_4 = Article("Test user access", "Slow down there nelly", "Accounts, users", new_user_2.id)
+                s.add(new_user_2)
+                s.add(new_article_4)
+                s.commit()
 
     return app
 

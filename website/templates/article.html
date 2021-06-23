@@ -31,12 +31,16 @@
                   </button>
                 {% endif %}
                 <div class="btn-toolbar pull-right" style="margin-bottom: 15px;">
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editArticleModal">
+                    <button type="button"
+                    class="btn btn-secondary {% if user.id != articles[0].created_by %}disabled{% endif %}"
+                    data-bs-toggle="modal" data-bs-target="#editArticleModal">
                       Edit
                     </button> 
                     <div>&nbsp;&nbsp;</div>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <button type="button"
+                    class="btn btn-secondary {% if user.id != articles[0].created_by %}disabled{% endif %}"
+                    data-bs-toggle="modal" data-bs-target="#deleteModal">
                         Delete
                     </button>
                 </div>

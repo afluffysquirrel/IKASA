@@ -9,6 +9,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     last_name = db.Column(db.String(150))
+    admin_flag = db.Column(db.Boolean)
     articles = db.relationship('Article')
 
     def __init__(self, email, password, first_name, last_name):
@@ -16,6 +17,7 @@ class User(db.Model, UserMixin):
         self.password = password
         self.first_name = first_name
         self.last_name = last_name
+        self.admin_flag = False
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)

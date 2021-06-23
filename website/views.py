@@ -46,7 +46,6 @@ def add_article():
     body = request.form.get('editor')
     tags = request.form.get('tags')
 
-
     # Sanitizing input
     soup = BeautifulSoup(body)
     for script_elt in soup.findAll('script'):
@@ -76,48 +75,55 @@ def add_article():
 @views.route('/articles/delete/<id>', methods=['POST'])
 @login_required
 def delete_article(id):
-    db.session.query(Article).filter(Article.id==id).delete()
-    db.session.commit()
-    flash('Article deleted', category='success')
-    return redirect(url_for('views.articles'))
+    articles = Article.query.filter(Article.id == id)
+    if articles[0].created_by == current_user.id:
+        db.session.query(Article).filter(Article.id==id).delete()
+        db.session.commit()
+        flash('Article deleted', category='success')
+        return redirect(url_for('views.articles'))
+    else:
+        flash('You cannot edit or delete other users articles', category='error')
+        return redirect(url_for('views.article', id=id))
 
 @views.route('/articles/edit/<id>', methods=['POST'])
 @login_required
 def edit_article(id):
     articles = Article.query.filter(Article.id == id)
+    if articles[0].created_by == current_user.id:
+        title = request.form.get('title')
+        body = request.form.get('editor')
+        tags = request.form.get('tags')
 
-    title = request.form.get('title')
-    body = request.form.get('editor')
-    tags = request.form.get('tags')
+        # Sanitizing input
+        soup = BeautifulSoup(body)
+        for script_elt in soup.findAll('script'):
+            script_elt.extract()
+        body = str(soup)
 
-    # Sanitizing input
-    soup = BeautifulSoup(body)
-    for script_elt in soup.findAll('script'):
-        script_elt.extract()
-    body = str(soup)
+        article = articles[0]
+        article.title = title
+        article.body = body
+        article.tags = tags
+        article.last_updated_date = date.today()
+        
+        uploaded_file = request.files['files']
+        filename = secure_filename(uploaded_file.filename)
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in upload_extensions:
+                #abort(400)
+                flash('Upload file filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
+            else: 
+                uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
+                article.attachments = str(id)+"_"+filename
 
-    article = articles[0]
-    article.title = title
-    article.body = body
-    article.tags = tags
-    article.last_updated_date = date.today()
-    
-    uploaded_file = request.files['files']
-    filename = secure_filename(uploaded_file.filename)
-    if filename != '':
-        file_ext = os.path.splitext(filename)[1]
-        if file_ext not in upload_extensions:
-            #abort(400)
-            flash('Upload file filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
-        else: 
-            uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
-            article.attachments = str(id)+"_"+filename
-            db.session.commit()
+        db.session.commit()
 
-    db.session.commit()
-
-    flash('Article updated', category='success')
-    return redirect(url_for('views.article', id=id))
+        flash('Article updated', category='success')
+        return redirect(url_for('views.article', id=id))
+    else:
+        flash('You cannot edit or delete other users articles', category='error')
+        return redirect(url_for('views.article', id=id))
 
 
 # View uploads
