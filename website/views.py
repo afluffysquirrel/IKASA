@@ -3,7 +3,7 @@ from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 from bs4 import BeautifulSoup
-from .models import Article, User
+from .models import Article, User, Ticket, Suggestion
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -23,7 +23,10 @@ def root():
 @views.route('/home', methods=['GET'])
 @login_required
 def home():
-    return render_template("home.html", user=current_user)
+    article_count = Article.query.count()
+    ticket_count = Ticket.query.count()
+    suggestion_count = Suggestion.query.count()
+    return render_template("home.html", user=current_user, article_count=article_count, ticket_count=ticket_count, suggestion_count=suggestion_count)
 
 
 # Articles

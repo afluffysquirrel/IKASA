@@ -1,21 +1,26 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
-<h1 align="center">Home</h1>
-<ul class="list-group list-group-flush" id="notes">
-  {% for note in user.notes %}
-  <li class="list-group-item">
-    {{ note.data }}
-    <button type="button" class="close" onClick="deleteNote({{ note.id }})">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </li>
-  {% endfor %}
-</ul>
-<form method="POST">
-  <textarea name="note" id="note" class="form-control"></textarea>
-  <br />
-  <div align="center">
-    <button type="submit" class="btn btn-primary">Add Note</button>
+<h1 align="center">IKASA</h1>
+<h5 align="center">Integrated Knowledge Article Suggestion Application</h5>
+<br/>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit ante dui, quis hendrerit sem pellentesque eget. Ut eget ipsum vitae mauris dignissim ultrices non a lorem. Nunc lectus enim, vehicula sit amet eros sed, tincidunt porttitor diam. Vestibulum risus turpis, auctor nec diam in, interdum varius est. Phasellus dolor sem, blandit nec commodo eu, condimentum in sapien. Nunc fringilla magna vehicula velit luctus semper. Maecenas eget ligula eget nunc congue ultrices. Nullam a massa ac urna eleifend tristique. Suspendisse in est a dui tempor pulvinar varius nec massa. Morbi dapibus laoreet accumsan. Sed dictum in tellus ut varius. Nulla tincidunt vitae lectus at interdum.</p>
+<br/>
+<div class="container">
+  <div class="row">
+    <div align="center" class="col-3 border border-primary rounded">
+      <h5>Number of articles</h5>
+      <h2>{{article_count}}</h2>
+    </div>
+    <div class="col"></div>
+    <div align="center" class="col-3 border border-primary rounded">
+      <h5>Number of tickets</h5>
+      <h2>{{ticket_count}}</h2>
+    </div>
+    <div class="col"></div>
+    <div align="center" class="col-3 border border-primary rounded">
+      <h5>Number of suggestions</h5>
+      <h2>{{suggestion_count}}</h2>
+    </div>
   </div>
-</form>
+</div>
 {% endblock %}
