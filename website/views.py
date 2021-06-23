@@ -1,11 +1,17 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, render_template, request, flash, jsonify, abort, send_from_directory
 from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 from bs4 import BeautifulSoup
 from .models import Article
 from . import db
+from werkzeug.utils import secure_filename
+from datetime import date
 #import json
+import os
+
+upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
+upload_path = 'uploads'
 
 views = Blueprint('views', __name__)
 
@@ -40,6 +46,7 @@ def add_article():
     body = request.form.get('editor')
     tags = request.form.get('tags')
 
+
     # Sanitizing input
     soup = BeautifulSoup(body)
     for script_elt in soup.findAll('script'):
@@ -50,6 +57,20 @@ def add_article():
     db.session.add(new_article)
     db.session.commit()
     id = new_article.id
+
+    uploaded_file = request.files['files']
+    filename = secure_filename(uploaded_file.filename)
+    if filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext not in upload_extensions:
+            #abort(400)
+            flash('Upload file filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
+        else: 
+            uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
+            new_article.attachments = str(id)+"_"+filename
+            db.session.commit()
+    
+    flash('Article created', category='success')
     return redirect(url_for('views.article', id=id))
 
 @views.route('/articles/delete/<id>', methods=['POST'])
@@ -59,6 +80,51 @@ def delete_article(id):
     db.session.commit()
     flash('Article deleted', category='success')
     return redirect(url_for('views.articles'))
+
+@views.route('/articles/edit/<id>', methods=['POST'])
+@login_required
+def edit_article(id):
+    articles = Article.query.filter(Article.id == id)
+
+    title = request.form.get('title')
+    body = request.form.get('editor')
+    tags = request.form.get('tags')
+
+    # Sanitizing input
+    soup = BeautifulSoup(body)
+    for script_elt in soup.findAll('script'):
+        script_elt.extract()
+    body = str(soup)
+
+    article = articles[0]
+    article.title = title
+    article.body = body
+    article.tags = tags
+    article.last_updated_date = date.today()
+    
+    uploaded_file = request.files['files']
+    filename = secure_filename(uploaded_file.filename)
+    if filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext not in upload_extensions:
+            #abort(400)
+            flash('Upload file filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
+        else: 
+            uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
+            article.attachments = str(id)+"_"+filename
+            db.session.commit()
+
+    db.session.commit()
+
+    flash('Article updated', category='success')
+    return redirect(url_for('views.article', id=id))
+
+
+# View uploads
+@views.route('/uploads/<path:filename>', methods=['GET'])
+@login_required
+def upload(filename):
+    return send_from_directory("../" + upload_path, filename)
 
 
 # Tickets

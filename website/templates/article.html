@@ -20,10 +20,20 @@
                 <b>Created</b>
                 <br/>
                 {{articles[0].creation_date}}
+                <p></p></p>
+                <b>Last updated</b>
+                <br/>
+                {{articles[0].last_updated_date}}
                 <hr/>
-                <a href="#" class="btn btn-primary pull-left">View attachments</a>
+                {% if articles[0].attachments != None %}
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#attachmentsModal">
+                    View attachments
+                  </button>
+                {% endif %}
                 <div class="btn-toolbar pull-right" style="margin-bottom: 15px;">
-                    <a href="#" class="btn btn-secondary">Edit</a> 
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editArticleModal">
+                      Edit
+                    </button> 
                     <div>&nbsp;&nbsp;</div>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -49,6 +59,87 @@
             </form>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Attachments modal -->
+  <div class="modal fade" id="attachmentsModal" tabindex="-1" aria-labelledby="attachmentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="attachmentsModalLabel">Attachments</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <a href="/uploads/{{articles[0].attachments}}">{{articles[0].attachments}}</a>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit article modal -->
+<div class="modal fade" id="editArticleModal" tabindex="-1" aria-labelledby="editArticleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editArticleModalLabel">Edit Article</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="/articles/edit/{{articles[0].id}}" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="email">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              value="{{articles[0].title}}"
+              placeholder="Enter title"
+            />
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="email">Description</label>
+            <textarea
+              class="form-control"
+              id="editor"
+              name="editor"
+              rows="3">{{articles[0].body}}</textarea>
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="email">Tags</label>
+            <input
+              type="text"
+              class="form-control"
+              id="tags"
+              name="tags"
+              value="{{articles[0].tags}}"
+              placeholder="Enter tags"
+            />
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="email">Attachments</label>
+            <input
+              type="file"
+              class="form-control-file"
+              id="files"
+              name="files"
+              >
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

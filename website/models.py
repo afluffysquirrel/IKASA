@@ -37,6 +37,7 @@ class Article(db.Model):
         self.tags = tags
         self.created_by = created_by
         self.creation_date = date.today()
+        self.last_updated_date = date.today()
 
 class Suggestion(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
