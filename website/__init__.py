@@ -78,8 +78,10 @@ def create_app():
                 first_name="Jezz",
                 last_name="A"
                 )
-                new_article_4 = Article("Test user access", "Slow down there nelly", "Accounts, users", new_user_2.id)
                 s.add(new_user_2)
+                s.commit()
+                
+                new_article_4 = Article("Test user access", "Slow down there nelly", "Accounts, users", new_user_2.id)
                 s.add(new_article_4)
                 s.commit()
 

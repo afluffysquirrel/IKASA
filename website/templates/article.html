@@ -17,7 +17,11 @@
                 <br/>
                 {{articles[0].tags}}
                 <p></p></p>
-                <b>Created</b>
+                <b>Created by</b>
+                <br/>
+                {{creator.first_name}} {{creator.last_name}}
+                <p></p></p>
+                <b>Created date</b>
                 <br/>
                 {{articles[0].creation_date}}
                 <p></p></p>
@@ -133,7 +137,7 @@
             <label for="email">Attachments</label>
             <input
               type="file"
-              class="form-control-file"
+              class="form-control"
               id="files"
               name="files"
               >

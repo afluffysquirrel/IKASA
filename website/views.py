@@ -3,7 +3,7 @@ from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 from bs4 import BeautifulSoup
-from .models import Article
+from .models import Article, User
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -37,7 +37,8 @@ def articles():
 @login_required
 def article(id):
     articles = Article.query.filter(Article.id == id)
-    return render_template("article.html", user=current_user, articles=articles)
+    creator = User.query.filter(User.id == articles[0].created_by)
+    return render_template("article.html", user=current_user, articles=articles, creator=creator[0])
 
 @views.route('/articles/add', methods=['POST'])
 @login_required
