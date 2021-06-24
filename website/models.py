@@ -27,10 +27,11 @@ class Article(db.Model):
     title = db.Column(db.String(128))
     body = db.Column(db.String(4096))
     tags = db.Column(db.String(128))
-    attachments = db.Column(db.String(512))
+    #attachments = db.Column(db.String(512))
     creation_date = db.Column(db.Date())
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     last_updated_date = db.Column(db.Date())
+    attachments = db.relationship('Attachment')
     #last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, body, tags, created_by):
@@ -43,3 +44,12 @@ class Article(db.Model):
 
 class Suggestion(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
+
+class Attachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
+    file_name = db.Column(db.String(512))
+
+    def __init__(self, article_id, file_name):
+        self.article_id = article_id
+        self.file_name = file_name

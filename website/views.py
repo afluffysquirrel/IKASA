@@ -3,7 +3,7 @@ from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 from bs4 import BeautifulSoup
-from .models import Article, User, Ticket, Suggestion
+from .models import Article, Attachment, User, Ticket, Suggestion
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -41,7 +41,8 @@ def articles():
 def article(id):
     articles = Article.query.filter(Article.id == id)
     creator = User.query.filter(User.id == articles[0].created_by)
-    return render_template("article.html", user=current_user, articles=articles, creator=creator[0])
+    attachments = Attachment.query.filter(Attachment.article_id == id)
+    return render_template("article.html", user=current_user, articles=articles, creator=creator[0], attachments=attachments)
 
 @views.route('/articles/add', methods=['POST'])
 @login_required
@@ -61,17 +62,19 @@ def add_article():
     db.session.commit()
     id = new_article.id
 
-    uploaded_file = request.files['files']
-    filename = secure_filename(uploaded_file.filename)
-    if filename != '':
-        file_ext = os.path.splitext(filename)[1]
-        if file_ext not in upload_extensions:
-            #abort(400)
-            flash('Upload file filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
-        else: 
-            uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
-            new_article.attachments = str(id)+"_"+filename
-            db.session.commit()
+    files = request.files.getlist("files")
+    for uploaded_file in files:
+        filename = secure_filename(uploaded_file.filename)
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in upload_extensions:
+                #abort(400)
+                flash('Upload file "' + uploaded_file.filename + '" filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
+            else: 
+                uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
+                new_attachment = Attachment(id, str(id)+"_"+filename)
+                db.session.add(new_attachment)
+                db.session.commit()
     
     flash('Article created', category='success')
     return redirect(url_for('views.article', id=id))
@@ -110,16 +113,18 @@ def edit_article(id):
         article.tags = tags
         article.last_updated_date = date.today()
         
-        uploaded_file = request.files['files']
-        filename = secure_filename(uploaded_file.filename)
-        if filename != '':
-            file_ext = os.path.splitext(filename)[1]
-            if file_ext not in upload_extensions:
-                #abort(400)
-                flash('Upload file filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
-            else: 
-                uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
-                article.attachments = str(id)+"_"+filename
+        files = request.files.getlist("files")
+        for uploaded_file in files:
+            filename = secure_filename(uploaded_file.filename)
+            if filename != '':
+                file_ext = os.path.splitext(filename)[1]
+                if file_ext not in upload_extensions:
+                    #abort(400)
+                    flash('Upload file "' + uploaded_file.filename + '" filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
+                else: 
+                    uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
+                    new_attachment = Attachment(id, str(id)+"_"+filename)
+                    db.session.add(new_attachment)
 
         db.session.commit()
 
