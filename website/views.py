@@ -36,7 +36,7 @@ def home():
 @login_required
 def articles():
     #articles = Article.query.all() 
-    articles = Article.query.limit(items_per_page).all()
+    articles = Article.query.limit(items_per_page)
     pages = int(math.ceil(Article.query.count() / items_per_page))
     return render_template("articles.html", user=current_user, articles=articles, pages=pages)
 
