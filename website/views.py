@@ -8,10 +8,12 @@ from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
 #import json
+import math
 import os
 
 upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
 upload_path = 'uploads'
+items_per_page = 5
 
 views = Blueprint('views', __name__)
 
@@ -33,8 +35,19 @@ def home():
 @views.route('/articles', methods=['GET'])
 @login_required
 def articles():
-    articles = Article.query.all()  
-    return render_template("articles.html", user=current_user, articles=articles)
+    #articles = Article.query.all() 
+    articles = Article.query.limit(items_per_page).all()
+    pages = int(math.ceil(Article.query.count() / items_per_page))
+    return render_template("articles.html", user=current_user, articles=articles, pages=pages)
+
+@views.route('/articles/page/<page_number>', methods=['GET'])
+@login_required
+def articles_page_number(page_number):
+    page_number = int(page_number)
+    row_start = (page_number-1) * items_per_page
+    articles = Article.query.offset(row_start).limit(items_per_page)
+    pages = int(math.ceil(Article.query.count() / items_per_page))
+    return render_template("articles.html", user=current_user, articles=articles, pages=pages, page_number=page_number)
 
 @views.route('/articles/<id>', methods=['GET'])
 @login_required
