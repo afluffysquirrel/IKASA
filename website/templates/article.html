@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 {% block title %}
-    Article: {{articles[0].id}}
+    Article: {{article.id}}
 {% endblock %}
 {% block content %}
     <div style="width:60%; margin:0 auto;">
         <div class="card mt-3 tab-card">
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
-                <h5 class="card-title">{{articles[0].title}}</h5>
-                <p>Article ID: {{articles[0].id}}</p>
+                <h5 class="card-title">{{article.title}}</h5>
+                <p>Article ID: {{article.id}}</p>
                 <hr/>
-                {{articles[0].body|safe}} <!-- Remember to sanitise input-->
+                {{article.body|safe}} <!-- Remember to sanitise input-->
                 <p></p>
                 <hr/>
                 <b>Tags</b>
                 <br/>
-                {{articles[0].tags}}
+                {{article.tags}}
                 <p></p></p>
                 <b>Created by</b>
                 <br/>
@@ -23,11 +23,11 @@
                 <p></p></p>
                 <b>Created date</b>
                 <br/>
-                {{articles[0].creation_date}}
+                {{article.creation_date}}
                 <p></p></p>
                 <b>Last updated</b>
                 <br/>
-                {{articles[0].last_updated_date}}
+                {{article.last_updated_date}}
                 <hr/>
                 {% if attachments[0] is defined %}
                   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#attachmentsModal">
@@ -36,14 +36,14 @@
                 {% endif %}
                 <div class="btn-toolbar pull-right" style="margin-bottom: 15px;">
                     <button type="button"
-                    class="btn btn-secondary {% if user.id != articles[0].created_by %}disabled{% endif %}"
+                    class="btn btn-secondary {% if user.id != article.created_by %}disabled{% endif %}"
                     data-bs-toggle="modal" data-bs-target="#editArticleModal">
                       Edit
                     </button> 
                     <div>&nbsp;&nbsp;</div>
                     <!-- Button trigger modal -->
                     <button type="button"
-                    class="btn btn-secondary {% if user.id != articles[0].created_by %}disabled{% endif %}"
+                    class="btn btn-secondary {% if user.id != article.created_by %}disabled{% endif %}"
                     data-bs-toggle="modal" data-bs-target="#deleteModal">
                         Delete
                     </button>
@@ -62,7 +62,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <form method="post" action="/articles/delete/{{articles[0].id}}">
+          <form method="post" action="/articles/delete/{{article.id}}">
             <input type="submit" value="Confirm" class="btn btn-primary">
             </form>
         </div>
@@ -104,7 +104,7 @@
         <h5 class="modal-title" id="editArticleModalLabel">Edit Article</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" action="/articles/edit/{{articles[0].id}}" enctype="multipart/form-data">
+      <form method="post" action="/articles/edit/{{article.id}}" enctype="multipart/form-data">
         <div class="modal-body">
           <div class="form-group">
             <label for="email">Title</label>
@@ -113,7 +113,7 @@
               class="form-control"
               id="title"
               name="title"
-              value="{{articles[0].title}}"
+              value="{{article.title}}"
               placeholder="Enter title"
             />
           </div>
@@ -124,7 +124,7 @@
               class="form-control"
               id="editor"
               name="editor"
-              rows="3">{{articles[0].body}}</textarea>
+              rows="3">{{article.body}}</textarea>
           </div>
           <br/>
           <div class="form-group">
@@ -134,7 +134,7 @@
               class="form-control"
               id="tags"
               name="tags"
-              value="{{articles[0].tags}}"
+              value="{{article.tags}}"
               placeholder="Enter tags"
             />
           </div>

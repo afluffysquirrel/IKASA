@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+    Ticket: {{ticket.reference}}
+{% endblock %}
+{% block content %}
+
+<div style="width:60%; margin:0 auto;">
+    <div class="card mt-3 tab-card">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
+            <h5 class="card-title">{{ticket.short_description}}</h5>
+            <p>Ticket reference: {{ticket.reference}}</p>
+            <hr/>
+            {{ticket.long_description}} 
+            <p></p>
+            <hr/>
+            <b>Created by</b>
+            <br/>
+            {{ticket.created_by}}
+        </div>
+    </div>
+</div>
+            
+{% endblock %}
+    

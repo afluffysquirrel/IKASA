@@ -51,10 +51,10 @@ def articles_page_number(page_number):
 @views.route('/articles/<id>', methods=['GET'])
 @login_required
 def article(id):
-    articles = Article.query.filter(Article.id == id)
-    creator = User.query.filter(User.id == articles[0].created_by)
+    article = Article.query.filter(Article.id == id).first()
+    creator = User.query.filter(User.id == article.created_by)
     attachments = Attachment.query.filter(Attachment.article_id == id)
-    return render_template("article.html", user=current_user, articles=articles, creator=creator[0], attachments=attachments)
+    return render_template("article.html", user=current_user, article=article, creator=creator[0], attachments=attachments)
 
 @views.route('/articles/add', methods=['POST'])
 @login_required
@@ -173,9 +173,9 @@ def tickets_page_number(page_number):
 
 @views.route('/tickets/<id>', methods=['GET'])
 @login_required
-def ticket(id):
-    return render_template("tickets.html", user=current_user)
-
+def ticket(id): 
+    ticket = Ticket.query.filter(Ticket.id == id).first()
+    return render_template("ticket.html", user=current_user, ticket=ticket)
 
 # Account
 @views.route('/user', methods=['GET'])
