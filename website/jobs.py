@@ -15,12 +15,14 @@ def extract_tickets():
 
         # ServiceNow API ticket extract logic to DB
         if rest_api_ticketing_tool.value == "ServiceNow":
+
             print("Job: Extracting tickets from ServiceNow...")
             url = rest_api_url.value + "/api/now/v1/table/incident?sysparm_limit=100&sysparm_query=ORDERBYDESCsys_created_on"
-            response = requests.get(url,auth=HTTPBasicAuth(rest_api_user.value, rest_api_pass.value))
-            if str(response.status_code) == "200": 
+            
+            try:
+                response = requests.get(url,auth=HTTPBasicAuth(rest_api_user.value, rest_api_pass.value))
+                if str(response.status_code) == "200": 
 
-                try:
                     jsonResponse = response.json()
 
                     from . import db
@@ -44,9 +46,14 @@ def extract_tickets():
                     # sys_created_by
                     # short_description
                     # description
-                    
-                except:
-                    print("Error: Extracting tickets - 200 response but parsing failure")
+
+                    print("Job: Extract succesfull!")
+
+                else:
+                    print("Error: response - " + str(response.status_code))
+                
+            except:
+                print("Error: Extracting tickets 'Check URL'")
         
         # if rest_api_ticketing_tool.value == "some_ticketing_tool"
 

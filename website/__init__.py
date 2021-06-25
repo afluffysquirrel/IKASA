@@ -46,7 +46,7 @@ def create_app():
         init_data()
 
     # Starting job schedule
-    app.apscheduler.add_job(func=scheduled_job, trigger='interval', minutes=5, args=None, id='j1')
+    app.apscheduler.add_job(func=scheduled_job, trigger='interval', minutes=1, args=None, id='j1')
     #app.apscheduler.add_job(func=scheduled_job, trigger='date', args=None, id='j1')
 
     return app

@@ -3,7 +3,7 @@ from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 from bs4 import BeautifulSoup
-from .models import Article, Attachment, User, Ticket, Suggestion
+from .models import Article, Attachment, User, Ticket, Suggestion, Config
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -147,7 +147,7 @@ def edit_article(id):
         return redirect(url_for('views.article', id=id))
 
 
-# View uploads
+# Uploads
 @views.route('/uploads/<path:filename>', methods=['GET'])
 @login_required
 def upload(filename):
@@ -182,3 +182,29 @@ def ticket(id):
 @login_required
 def user():
     return render_template("account.html", user=current_user)
+
+# Admin
+@views.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    ticketing_tool = Config.query.filter(Config.look_up == "rest_api_ticketing_tool").first()
+    api_url = Config.query.filter(Config.look_up == "rest_api_url").first()
+    api_user = Config.query.filter(Config.look_up == "rest_api_user").first()
+    api_pass = Config.query.filter(Config.look_up == "rest_api_pass").first()
+
+    if current_user.admin_flag == True:
+        if request.method == 'GET':
+            return render_template("admin.html", user=current_user, ticketing_tool=ticketing_tool.value, api_url=api_url.value, api_user=api_user.value, api_pass=api_pass.value)
+        if request.method == 'POST':
+            ticketing_tool.value = request.form.get('ticketing_tool')
+            api_url.value = request.form.get('API_URL')
+            api_user.value = request.form.get('API_USER')
+            api_pass.value = request.form.get('API_PASS')
+
+            db.session.commit()
+
+            flash('Config updated', category='success')
+            return redirect(url_for('views.admin'))
+    else:
+        flash('Access denied', category='error')
+        return redirect(url_for('views.home'))
