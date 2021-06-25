@@ -1,3 +1,4 @@
+import re
 from . import create_database, db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
@@ -21,6 +22,17 @@ class User(db.Model, UserMixin):
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    reference = db.Column(db.String(32))
+    created_on = db.Column(db.Date())
+    created_by = db.Column(db.String(128))
+    short_description = db.Column(db.String(256))
+    long_description = db.Column(db.String(4096))
+
+    def __init__(self, reference, created_by, short_description, long_description):
+        self.reference = reference
+        self.created_by = created_by
+        self.short_description = short_description
+        self.long_description = long_description
 
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)

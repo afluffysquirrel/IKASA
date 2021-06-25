@@ -12,7 +12,7 @@ import os
 
 upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
 upload_path = 'uploads'
-items_per_page = 5
+items_per_page = 20
 
 views = Blueprint('views', __name__)
 
@@ -158,7 +158,18 @@ def upload(filename):
 @views.route('/tickets', methods=['GET'])
 @login_required
 def tickets():
-    return render_template("tickets.html", user=current_user)
+    tickets = Ticket.query.limit(items_per_page)
+    pages = int(math.ceil(Ticket.query.count() / items_per_page))
+    return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages)
+
+@views.route('/tickets/page/<page_number>', methods=['GET'])
+@login_required
+def tickets_page_number(page_number):
+    page_number = int(page_number)
+    row_start = (page_number-1) * items_per_page
+    tickets = Ticket.query.offset(row_start).limit(items_per_page)
+    pages = int(math.ceil(Ticket.query.count() / items_per_page))
+    return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, page_number=page_number)
 
 @views.route('/tickets/<id>', methods=['GET'])
 @login_required
