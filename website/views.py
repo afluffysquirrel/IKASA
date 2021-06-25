@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, jsonify, abort, send_from_directory
+from flask import Blueprint, render_template, request, flash, send_from_directory
 from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
@@ -7,7 +7,6 @@ from .models import Article, Attachment, User, Ticket, Suggestion
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
-#import json
 import math
 import os
 

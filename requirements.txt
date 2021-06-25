@@ -1,5 +1,6 @@
 flask
 Flask-SQLAlchemy
 flask-login
-apscheduler
 beautifulsoup4
+requests
+Flask-APScheduler

@@ -1,0 +1,4 @@
+https://dev104044.service-now.com/api/now/table/incident?sysparm_query=sys_updated_on%3Ejavascript%3Ags.beginningOfLast1500Minutes()&sysparm_limit=10
+
+Username: admin
+Password: O9PvrmPpFoG8

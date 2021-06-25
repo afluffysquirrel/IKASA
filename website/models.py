@@ -53,3 +53,12 @@ class Attachment(db.Model):
     def __init__(self, article_id, file_name):
         self.article_id = article_id
         self.file_name = file_name
+
+class Config(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    look_up = db.Column(db.String(512))
+    value = db.Column(db.String(512))
+
+    def __init__(self, look_up, value):
+        self.look_up = look_up
+        self.value = value
