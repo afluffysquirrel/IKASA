@@ -35,6 +35,7 @@ def home():
 @views.route('/articles', methods=['GET'])
 @login_required
 def articles():
+    # If search return all in one page
     if request.args.get('search') != None and request.args.get('search') != "":
         look_for = request.args.get('search').replace(' ', '%').lower()
         look_for = '%{0}%'.format(look_for)
@@ -44,11 +45,22 @@ def articles():
                 Article.id.like(look_for)
             )
         )
-        return render_template("articles.html", user=current_user, articles=articles, pages=1, search=request.args.get('search'))
+        return render_template("tickets.html", user=current_user, articles=articles, pages=1, search=request.args.get('search'))
     else:
-        articles = Article.query.limit(items_per_page)
+        # If not search
         pages = int(math.ceil(Article.query.count() / items_per_page))
-        return render_template("articles.html", user=current_user, articles=articles, pages=pages, search=request.args.get('search'))
+
+        # Return specific page
+        if request.args.get('page') != None:
+            page_number = int(request.args.get('page'))
+            row_start = (page_number-1) * items_per_page
+            articles = Article.query.offset(row_start).limit(items_per_page)
+            return render_template("articles.html", user=current_user, articles=articles, pages=pages, page_number=page_number,  search=request.args.get('search'))
+            
+        #Return page 1
+        else:
+            articles = Article.query.limit(items_per_page)
+            return render_template("articles.html", user=current_user, articles=articles, pages=pages, search=request.args.get('search'))
 
 @views.route('/articles/<id>', methods=['GET'])
 @login_required
@@ -160,6 +172,7 @@ def upload(filename):
 @views.route('/tickets', methods=['GET'])
 @login_required
 def tickets():
+    # If search return all in one page
     if request.args.get('search') != None and request.args.get('search') != "":
         look_for = request.args.get('search').replace(' ', '%').lower()
         look_for = '%{0}%'.format(look_for)
@@ -171,16 +184,26 @@ def tickets():
         )
         return render_template("tickets.html", user=current_user, tickets=tickets, pages=1, search=request.args.get('search'))
     else:
-        tickets = Ticket.query.limit(items_per_page)
+        # If not search
         pages = int(math.ceil(Ticket.query.count() / items_per_page))
-        return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, search=request.args.get('search'))
+
+        # Return specific page
+        if request.args.get('page') != None:
+            page_number = int(request.args.get('page'))
+            row_start = (page_number-1) * items_per_page
+            tickets = Ticket.query.offset(row_start).limit(items_per_page)
+            return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, page_number=page_number,  search=request.args.get('search'))
+            
+        #Return page 1
+        else:
+            tickets = Ticket.query.limit(items_per_page)
+            return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, search=request.args.get('search'))
 
 @views.route('/tickets/<id>', methods=['GET'])
 @login_required
 def ticket(id): 
     ticket = Ticket.query.filter(Ticket.id == id).first()
     return render_template("ticket.html", user=current_user, ticket=ticket)
-
 
 # Account
 @views.route('/user', methods=['GET'])
