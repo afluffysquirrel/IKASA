@@ -7,6 +7,7 @@ from .models import Article, Attachment, User, Ticket, Suggestion, Config
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date
+from sqlalchemy import and_, or_, not_
 import math
 import os
 
@@ -34,19 +35,20 @@ def home():
 @views.route('/articles', methods=['GET'])
 @login_required
 def articles():
-    #articles = Article.query.all() 
-    articles = Article.query.limit(items_per_page)
-    pages = int(math.ceil(Article.query.count() / items_per_page))
-    return render_template("articles.html", user=current_user, articles=articles, pages=pages)
-
-@views.route('/articles/page/<page_number>', methods=['GET'])
-@login_required
-def articles_page_number(page_number):
-    page_number = int(page_number)
-    row_start = (page_number-1) * items_per_page
-    articles = Article.query.offset(row_start).limit(items_per_page)
-    pages = int(math.ceil(Article.query.count() / items_per_page))
-    return render_template("articles.html", user=current_user, articles=articles, pages=pages, page_number=page_number)
+    if request.args.get('search') != None and request.args.get('search') != "":
+        look_for = request.args.get('search').replace(' ', '%').lower()
+        look_for = '%{0}%'.format(look_for)
+        articles = Article.query.filter(
+            or_(
+                Article.title.like(look_for),
+                Article.id.like(look_for)
+            )
+        )
+        return render_template("articles.html", user=current_user, articles=articles, pages=1, search=request.args.get('search'))
+    else:
+        articles = Article.query.limit(items_per_page)
+        pages = int(math.ceil(Article.query.count() / items_per_page))
+        return render_template("articles.html", user=current_user, articles=articles, pages=pages, search=request.args.get('search'))
 
 @views.route('/articles/<id>', methods=['GET'])
 @login_required
@@ -158,24 +160,27 @@ def upload(filename):
 @views.route('/tickets', methods=['GET'])
 @login_required
 def tickets():
-    tickets = Ticket.query.limit(items_per_page)
-    pages = int(math.ceil(Ticket.query.count() / items_per_page))
-    return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages)
-
-@views.route('/tickets/page/<page_number>', methods=['GET'])
-@login_required
-def tickets_page_number(page_number):
-    page_number = int(page_number)
-    row_start = (page_number-1) * items_per_page
-    tickets = Ticket.query.offset(row_start).limit(items_per_page)
-    pages = int(math.ceil(Ticket.query.count() / items_per_page))
-    return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, page_number=page_number)
+    if request.args.get('search') != None and request.args.get('search') != "":
+        look_for = request.args.get('search').replace(' ', '%').lower()
+        look_for = '%{0}%'.format(look_for)
+        tickets = Ticket.query.filter(
+            or_(
+                Ticket.short_description.like(look_for),
+                Ticket.reference.like(look_for)
+            )
+        )
+        return render_template("tickets.html", user=current_user, tickets=tickets, pages=1, search=request.args.get('search'))
+    else:
+        tickets = Ticket.query.limit(items_per_page)
+        pages = int(math.ceil(Ticket.query.count() / items_per_page))
+        return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, search=request.args.get('search'))
 
 @views.route('/tickets/<id>', methods=['GET'])
 @login_required
 def ticket(id): 
     ticket = Ticket.query.filter(Ticket.id == id).first()
     return render_template("ticket.html", user=current_user, ticket=ticket)
+
 
 # Account
 @views.route('/user', methods=['GET'])
