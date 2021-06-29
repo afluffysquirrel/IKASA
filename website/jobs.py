@@ -9,7 +9,7 @@ from collections import OrderedDict
 
 
 def calculate_suggestions():
-    print("Job: calculating suggestions...")
+    print("Job: Calculating suggestions...")
 
     embedder = SentenceTransformer('paraphrase-mpnet-base-v2')
     closest_n = 5
@@ -20,9 +20,7 @@ def calculate_suggestions():
     tickets = pd.read_sql_table(table_name = Ticket.__table__.name, con= db.session.connection(), index_col="id")
     articles = pd.read_sql_table(table_name = Article.__table__.name, con= db.session.connection(), index_col="id")
 
-    #articles["tags"] = articles["tags"].str.replace(", ","")
     articles["tags"] = articles["tags"].str.replace(",","")
-
     articles = articles.applymap(lambda s:s.lower() if type(s) == str else s)
     tickets = tickets.applymap(lambda s:s.lower() if type(s) == str else s)
     
@@ -66,7 +64,7 @@ def calculate_suggestions():
                     query = corpus[idx].strip()
                     article_id = query.split(':')[0]
 
-                    print(ticket_id + " " + query + " " + str(round((1-distance),2)))
+                    #print(ticket_id + " " + query + " " + str(round((1-distance),2)))
                     
                     query = Suggestion.query.filter(Suggestion.article_id==article_id, Suggestion.ticket_id==ticket_id).first()
 
@@ -75,7 +73,7 @@ def calculate_suggestions():
                         db.session.add(new_suggestion)
                         db.session.commit()
 
-    print("Job: suggestions calculated")
+    print("Job: Suggestions calculated")
 
 
 def extract_tickets():
