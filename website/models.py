@@ -27,6 +27,7 @@ class Ticket(db.Model):
     created_by = db.Column(db.String(128))
     short_description = db.Column(db.String(256))
     long_description = db.Column(db.String(4096))
+    suggestions = db.relationship('Suggestion')
 
     def __init__(self, reference, created_by, short_description, long_description):
         self.reference = reference
@@ -44,6 +45,7 @@ class Article(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     last_updated_date = db.Column(db.Date())
     attachments = db.relationship('Attachment')
+    suggestions = db.relationship('Suggestion')
     #last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, body, tags, created_by):
@@ -56,6 +58,14 @@ class Article(db.Model):
 
 class Suggestion(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
+    ticket_id = db.Column(db.String, db.ForeignKey('ticket.reference'))
+    similarity = db.Column(db.Float)
+
+    def __init__(self, article_id, ticket_id, similarity):
+        self.article_id = article_id
+        self.ticket_id = ticket_id
+        self.similarity = similarity
 
 class Attachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -45,7 +45,7 @@ def articles():
                 Article.id.like(look_for)
             )
         )
-        return render_template("tickets.html", user=current_user, articles=articles, pages=1, search=request.args.get('search'))
+        return render_template("articles.html", user=current_user, articles=articles, pages=1, search=request.args.get('search'))
     else:
         # If not search
         pages = int(math.ceil(Article.query.count() / items_per_page))
@@ -203,7 +203,12 @@ def tickets():
 @login_required
 def ticket(id): 
     ticket = Ticket.query.filter(Ticket.id == id).first()
-    return render_template("ticket.html", user=current_user, ticket=ticket)
+
+    query = db.session.query(Article, Ticket, Suggestion) \
+    .filter(Suggestion.article_id == Article.id, Suggestion.ticket_id == Ticket.reference, Suggestion.ticket_id == ticket.reference) \
+    .order_by(Suggestion.similarity.desc()).all()
+
+    return render_template("ticket.html", user=current_user, ticket=ticket, query=query)
 
 # Account
 @views.route('/user', methods=['GET'])

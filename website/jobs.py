@@ -1,6 +1,65 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+import pandas as pd
+
+from sentence_transformers import SentenceTransformer
+import scipy.spatial
+from collections import OrderedDict
+
+
+def calculate_suggestions():
+    print("Job: calculate suggestions...")
+
+    embedder = SentenceTransformer('bert-base-nli-mean-tokens')
+    closest_n = 5
+
+    from . import db
+    from .models import Config, Ticket, Article, Suggestion
+
+    tickets = pd.read_sql_table(table_name = Ticket.__table__.name, con= db.session.connection(), index_col="id")
+    articles = pd.read_sql_table(table_name = Article.__table__.name, con= db.session.connection(), index_col="id")
+    articles["tags"] = articles["tags"].str.replace(",","")
+    articles = articles.applymap(lambda s:s.lower() if type(s) == str else s)
+    tickets = tickets.applymap(lambda s:s.lower() if type(s) == str else s)
+    
+    tickets['soup'] = tickets['short_description'] + " " + tickets['long_description']
+    articles['soup'] = articles['title'] + " "  + articles['tags']
+
+    corpus = []
+
+    for index, row in articles.iterrows():
+        row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
+        corpus.append(str(index) + ": " + row['soup'])
+
+    corpus_embeddings = embedder.encode(corpus)
+
+    for index, row in tickets.iterrows():
+        queries = [row['soup']]
+        query_embeddings = embedder.encode(queries)
+        for query, query_embedding in zip(queries, query_embeddings):
+            distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
+
+            results = zip(range(len(distances)), distances)
+            results = sorted(results, key=lambda x: x[1])
+
+            for idx, distance in results[0:closest_n]:
+                if((1-distance) >= 0.5):
+                    ticket_id = row['reference'].upper()
+                    query = corpus[idx].strip()
+                    article_id = query.split(':')[0]
+
+                    print(ticket_id + " " + query + " " + str(round((1-distance),2)))
+                    
+                    query = Suggestion.query.filter(Suggestion.article_id==article_id, Suggestion.ticket_id==ticket_id).first()
+
+                    if query == None:
+                        new_suggestion = Suggestion(article_id, ticket_id, round((1-distance),2))
+                        db.session.add(new_suggestion)
+                        db.session.commit()
+
+    print("Job: suggestions calculated")
+
 
 def extract_tickets():
     from .models import Config
@@ -11,7 +70,11 @@ def extract_tickets():
     rest_api_pass = Config.query.filter(Config.look_up == "rest_api_pass").first()
     rest_api_url = Config.query.filter(Config.look_up == "rest_api_url").first()
 
-    if rest_api_ticketing_tool.value is not None:
+    #Connection validation
+    if rest_api_ticketing_tool.value is not None and rest_api_ticketing_tool.value != "" \
+    and rest_api_user.value is not None and rest_api_user.value != "" \
+    and rest_api_pass.value is not None and rest_api_pass.value != "" \
+    and rest_api_url.value is not None and rest_api_url.value != "":
 
         # ServiceNow API ticket extract logic to DB
         if rest_api_ticketing_tool.value == "ServiceNow":
@@ -57,6 +120,7 @@ def extract_tickets():
         
         # if rest_api_ticketing_tool.value == "some_ticketing_tool"
 
+        calculate_suggestions()
+
     else:
         print("Error: Missing extract credentials")
-        

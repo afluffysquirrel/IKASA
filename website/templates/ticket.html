@@ -26,21 +26,25 @@
 <h5 align="center">Suggested articles</h5>
 
 <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th class="col-1" scope="col">ID</th>
-        <th scope="col">Name</th>
-        <th class="col-2" scope="col">Created</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr onclick="window.location='/articles/1';">
-        <th scope="row">1</th>
-        <td>Temp suggestion article</td>
-        <td>2021-06-25</td>
-      </tr>
-    </tbody>
-  </table>
+  <thead>
+    <tr>
+      <th class="col-1" scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th class="col-2" scope="col">Match strength</th>
+      <th class="col-2" scope="col">Created</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for result in query %}
+    <tr onclick="window.location='/articles/{{result.Article.id}}';">
+      <th scope="row">{{result.Article.id}}</th>
+      <td>{{result.Article.title}}</td>
+      <td>{{result.Suggestion.similarity}}</td>
+      <td>{{result.Article.creation_date}}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
             
 {% endblock %}
     

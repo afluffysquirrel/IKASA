@@ -4,8 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
-from .jobs import extract_tickets
+from .jobs import extract_tickets, calculate_suggestions
 import os 
+import time
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -19,7 +20,10 @@ def create_app():
     # Schedule job config
     def scheduled_job():
         with app.app_context():
+            time.sleep(2)
             extract_tickets()
+            #calculate_suggestions()
+
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
@@ -46,8 +50,8 @@ def create_app():
         init_data()
 
     # Starting job schedule
-    app.apscheduler.add_job(func=scheduled_job, trigger='interval', minutes=1, args=None, id='j1')
-    #app.apscheduler.add_job(func=scheduled_job, trigger='date', args=None, id='j1')
+    app.apscheduler.add_job(func=scheduled_job, trigger='date', args=None, id='j1')
+    app.apscheduler.add_job(func=scheduled_job, trigger='interval', minutes=5, args=None, id='j2')
 
     return app
 
@@ -98,11 +102,9 @@ def init_data():
         article = Article.query.first()
         if article == None:
             new_article = Article("OBIEE server 403", "Hit the DBA button", "OBIEE, Network, DBA", new_user.id)
-            new_article_2 = Article("OIC www-auth missing header", "Bounce OIC connectivity agent", "OIC, Connectivity agent", new_user.id)
-            new_article_3 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI XMLP, Dev", new_user.id)
-            new_article_4 = Article("Test user access", "Slow down there nelly", "Accounts, users", new_user_2.id)
+            new_article_2 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI XMLP, Dev", new_user.id)
+            new_article_3 = Article("Test user access", "Slow down there nelly", "Accounts, users", new_user_2.id)
             s.add(new_article)
             s.add(new_article_2)
             s.add(new_article_3)
-            s.add(new_article_4)
             s.commit()
