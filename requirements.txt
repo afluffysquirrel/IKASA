@@ -5,3 +5,4 @@ beautifulsoup4
 requests
 Flask-APScheduler
 sentence-transformers
+scipy

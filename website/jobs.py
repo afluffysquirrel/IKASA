@@ -9,9 +9,9 @@ from collections import OrderedDict
 
 
 def calculate_suggestions():
-    print("Job: calculate suggestions...")
+    print("Job: calculating suggestions...")
 
-    embedder = SentenceTransformer('bert-base-nli-mean-tokens')
+    embedder = SentenceTransformer('paraphrase-mpnet-base-v2')
     closest_n = 5
 
     from . import db
@@ -19,7 +19,10 @@ def calculate_suggestions():
 
     tickets = pd.read_sql_table(table_name = Ticket.__table__.name, con= db.session.connection(), index_col="id")
     articles = pd.read_sql_table(table_name = Article.__table__.name, con= db.session.connection(), index_col="id")
+
+    #articles["tags"] = articles["tags"].str.replace(", ","")
     articles["tags"] = articles["tags"].str.replace(",","")
+
     articles = articles.applymap(lambda s:s.lower() if type(s) == str else s)
     tickets = tickets.applymap(lambda s:s.lower() if type(s) == str else s)
     
@@ -29,14 +32,28 @@ def calculate_suggestions():
     corpus = []
 
     for index, row in articles.iterrows():
+
+        # Remove duplicates
         row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
+
+        # Remove special chars
+        row['soup'] = row['soup'].replace('\W', '')
+
         corpus.append(str(index) + ": " + row['soup'])
 
     corpus_embeddings = embedder.encode(corpus)
 
     for index, row in tickets.iterrows():
+
+        # Remove duplicates
+        row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
+
+        # Remove special chars
+        row['soup'] = row['soup'].replace('\W', '')
+
         queries = [row['soup']]
         query_embeddings = embedder.encode(queries)
+
         for query, query_embedding in zip(queries, query_embeddings):
             distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
 
