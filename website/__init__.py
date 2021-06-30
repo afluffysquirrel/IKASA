@@ -22,6 +22,7 @@ def create_app():
         with app.app_context():
             time.sleep(2)
             extract_tickets()
+            calculate_suggestions()
 
     scheduler = APScheduler()
     scheduler.init_app(app)
@@ -49,9 +50,11 @@ def create_app():
         init_data()
 
     # Starting job schedule
+    
     app.apscheduler.add_job(func=scheduled_job, trigger='date', args=None, id='j1')
     app.apscheduler.add_job(func=scheduled_job, trigger='interval', minutes=5, args=None, id='j2')
-
+    
+    
     return app
 
 def create_database(app):

@@ -142,7 +142,7 @@ def extract_tickets():
                     #print("Job: Extract succesfull!")
                     console_log('Extract succesfull', '')
 
-                    calculate_suggestions()
+                    #calculate_suggestions()
 
                 else:
                     #print("Error: Response - " + str(response.status_code))

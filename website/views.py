@@ -11,6 +11,7 @@ from sqlalchemy import and_, or_, not_
 import math
 import os
 from werkzeug.security import generate_password_hash
+from .jobs import extract_tickets, calculate_suggestions
 
 upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
 upload_path = 'uploads'
@@ -288,6 +289,28 @@ def admin():
 
             flash('Config updated', category='success')
             return redirect(url_for('views.admin'))
+    else:
+        flash('Access denied', category='error')
+        return redirect(url_for('views.home'))
+
+@views.route('/admin/extract-tickets', methods=['GET'])
+@login_required
+def admin_extract_tickets():
+    if current_user.admin_flag == True:
+        extract_tickets()
+        flash('Tickets extracted', category='success')
+        return redirect(url_for('views.admin'))
+    else:
+        flash('Access denied', category='error')
+        return redirect(url_for('views.home'))
+
+@views.route('/admin/calculate-suggestions', methods=['GET'])
+@login_required
+def admin_calc_suggestions():
+    if current_user.admin_flag == True:
+        calculate_suggestions()
+        flash('Suggestions calculated', category='success')
+        return redirect(url_for('views.admin'))
     else:
         flash('Access denied', category='error')
         return redirect(url_for('views.home'))
