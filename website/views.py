@@ -10,6 +10,7 @@ from datetime import date
 from sqlalchemy import and_, or_, not_
 import math
 import os
+from werkzeug.security import generate_password_hash
 
 upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
 upload_path = 'uploads'
@@ -66,9 +67,14 @@ def articles():
 @login_required
 def article(id):
     article = Article.query.filter(Article.id == id).first()
-    creator = User.query.filter(User.id == article.created_by)
-    attachments = Attachment.query.filter(Attachment.article_id == id)
-    return render_template("article.html", user=current_user, article=article, creator=creator[0], attachments=attachments)
+
+    if article == None:
+        flash('Article does not exist', category='error')
+        return redirect(url_for('views.articles'))
+    else:
+        creator = User.query.filter(User.id == article.created_by)
+        attachments = Attachment.query.filter(Attachment.article_id == id)
+        return render_template("article.html", user=current_user, article=article, creator=creator[0], attachments=attachments)
 
 @views.route('/articles/add', methods=['POST'])
 @login_required
@@ -109,7 +115,7 @@ def add_article():
 @login_required
 def delete_article(id):
     articles = Article.query.filter(Article.id == id)
-    if articles[0].created_by == current_user.id:
+    if articles[0].created_by == current_user.id or current_user.admin_flag == True:
         db.session.query(Article).filter(Article.id==id).delete()
         db.session.commit()
         flash('Article deleted', category='success')
@@ -122,7 +128,7 @@ def delete_article(id):
 @login_required
 def edit_article(id):
     articles = Article.query.filter(Article.id == id)
-    if articles[0].created_by == current_user.id:
+    if articles[0].created_by == current_user.id or current_user.admin_flag == True:
         title = request.form.get('title')
         body = request.form.get('editor')
         tags = request.form.get('tags')
@@ -204,17 +210,53 @@ def tickets():
 def ticket(id): 
     ticket = Ticket.query.filter(Ticket.id == id).first()
 
-    query = db.session.query(Article, Ticket, Suggestion) \
-    .filter(Suggestion.article_id == Article.id, Suggestion.ticket_id == Ticket.reference, Suggestion.ticket_id == ticket.reference) \
-    .order_by(Suggestion.similarity.desc()).all()
+    if ticket == None:
+        flash('Ticket does not exist', category='error')
+        return redirect(url_for('views.tickets'))
+    else:
+        query = db.session.query(Article, Ticket, Suggestion) \
+        .filter(Suggestion.article_id == Article.id, Suggestion.ticket_id == Ticket.reference, Suggestion.ticket_id == ticket.reference) \
+        .order_by(Suggestion.similarity.desc()).all()
 
-    return render_template("ticket.html", user=current_user, ticket=ticket, query=query)
+        return render_template("ticket.html", user=current_user, ticket=ticket, query=query)
 
 # Account
-@views.route('/user', methods=['GET'])
+@views.route('/user', methods=['GET', 'POST'])
 @login_required
 def user():
-    return render_template("account.html", user=current_user)
+    if request.method == 'GET':
+        return render_template("account.html", user=current_user)
+    if request.method == 'POST':
+        email = request.form.get('email')
+        first_name = request.form.get('firstName')
+        last_name = request.form.get('lastName')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+
+        user = User.query.filter(User.email==email, User.id != current_user.id).first()
+
+        if user:
+            flash('Email already exists.', category='error')
+        elif len(email) < 4:
+            flash('Email must be greater than 3 characters.', category='error')
+        elif len(first_name) < 2:
+            flash('First name must be greater than 1 character.', category='error')
+        elif password1 != password2:
+            flash('Passwords don\'t match.', category='error')
+        elif len(password1) < 7 and len(password1) != 0:
+            flash('Password must be at least 7 characters.', category='error')
+        else:
+            current_user.email = email
+            current_user.first_name = first_name
+            current_user.last_name = last_name
+
+            if len(password1) > 0:
+                current_user.password = generate_password_hash(password1, method='sha256')
+            
+            db.session.commit()
+            flash('Account details updated!', category='success')
+            
+        return redirect(url_for('views.user'))
 
 # Admin
 @views.route('/admin', methods=['GET', 'POST'])

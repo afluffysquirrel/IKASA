@@ -7,9 +7,22 @@ from sentence_transformers import SentenceTransformer
 import scipy.spatial
 from collections import OrderedDict
 
+from datetime import datetime
+
+def console_log(message, log_type):
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    string = '[' + current_time + '] Scheduled Job : '
+    if log_type == 'error':
+        string += 'Error - '
+    string += message
+    print(string)
+
+    
 
 def calculate_suggestions():
-    print("Job: Calculating suggestions...")
+    #print("Job: Calculating suggestions...")
+    console_log('Calculating suggestions...', '')
 
     embedder = SentenceTransformer('paraphrase-mpnet-base-v2')
     closest_n = 5
@@ -73,7 +86,8 @@ def calculate_suggestions():
                         db.session.add(new_suggestion)
                         db.session.commit()
 
-    print("Job: Suggestions calculated")
+    #print("Job: Suggestions calculated")
+    console_log('Suggestions calculated', '')
 
 
 def extract_tickets():
@@ -94,7 +108,8 @@ def extract_tickets():
         # ServiceNow API ticket extract logic to DB
         if rest_api_ticketing_tool.value == "ServiceNow":
 
-            print("Job: Extracting tickets from ServiceNow...")
+            #print("Job: Extracting tickets from ServiceNow...")
+            console_log('Extracting tickets from ServiceNow...', '')
             url = rest_api_url.value + "/api/now/v1/table/incident?sysparm_limit=100&sysparm_query=ORDERBYDESCsys_created_on"
             
             try:
@@ -125,17 +140,21 @@ def extract_tickets():
                     # short_description
                     # description
 
-                    print("Job: Extract succesfull!")
+                    #print("Job: Extract succesfull!")
+                    console_log('Extract succesfull', '')
+
+                    calculate_suggestions()
 
                 else:
-                    print("Error: response - " + str(response.status_code))
+                    #print("Error: Response - " + str(response.status_code))
+                    console_log("Response - " + str(response.status_code), 'error')
                 
             except:
-                print("Error: Extracting tickets 'Check URL'")
+                #print("Error: Extracting tickets 'Check URL'")
+                console_log("Extracting tickets 'Check URL'", 'error')
         
         # if rest_api_ticketing_tool.value == "some_ticketing_tool"
 
-        calculate_suggestions()
-
     else:
-        print("Error: Missing extract credentials")
+        #print("Error: Missing extract credentials")
+        console_log("Missing extract credentials", 'error')
