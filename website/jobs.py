@@ -18,7 +18,6 @@ def console_log(message, log_type):
     string += message
     print(string)
 
-    
 
 def calculate_suggestions():
     #print("Job: Calculating suggestions...")

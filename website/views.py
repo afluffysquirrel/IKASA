@@ -83,6 +83,10 @@ def add_article():
     body = request.form.get('editor')
     tags = request.form.get('tags')
 
+    if title == "" or title == None or body == "" or body == None or tags == "" or tags == None:
+        flash('Articles must contain a title, description and at least one tag', category='error')
+        return redirect(url_for('views.articles'))
+
     # Sanitizing input
     soup = BeautifulSoup(body)
     for script_elt in soup.findAll('script'):
@@ -132,6 +136,10 @@ def edit_article(id):
         title = request.form.get('title')
         body = request.form.get('editor')
         tags = request.form.get('tags')
+
+        if title == "" or title == None or body == "" or body == None or tags == "" or tags == None:
+            flash('Articles must contain a title, description and at least one tag', category='error')
+            return redirect(url_for('views.article', id=id))
 
         # Sanitizing input
         soup = BeautifulSoup(body)

@@ -22,7 +22,6 @@ def create_app():
         with app.app_context():
             time.sleep(2)
             extract_tickets()
-            #calculate_suggestions()
 
     scheduler = APScheduler()
     scheduler.init_app(app)
