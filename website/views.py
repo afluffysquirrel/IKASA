@@ -67,6 +67,9 @@ def articles():
 @views.route('/articles/<id>', methods=['GET'])
 @login_required
 def article(id):
+    if request.args.get('search') != None and request.args.get('search') != "":
+        return redirect(url_for('views.articles', search=request.args.get('search')))
+
     article = Article.query.filter(Article.id == id).first()
 
     if article == None:
@@ -216,7 +219,11 @@ def tickets():
 
 @views.route('/tickets/<id>', methods=['GET'])
 @login_required
-def ticket(id): 
+def ticket(id):
+
+    if request.args.get('search') != None and request.args.get('search') != "":
+            return redirect(url_for('views.tickets', search=request.args.get('search')))
+
     ticket = Ticket.query.filter(Ticket.id == id).first()
 
     if ticket == None:
