@@ -285,7 +285,8 @@ def admin():
 
     if current_user.admin_flag == True:
         if request.method == 'GET':
-            return render_template("admin.html", user=current_user, ticketing_tool=ticketing_tool.value, api_url=api_url.value, api_user=api_user.value, api_pass=api_pass.value)
+            unapproved_users = User.query.filter(User.approved_flag == False)
+            return render_template("admin.html", user=current_user, ticketing_tool=ticketing_tool.value, api_url=api_url.value, api_user=api_user.value, api_pass=api_pass.value, unapproved_users=unapproved_users)
         if request.method == 'POST':
             ticketing_tool.value = request.form.get('ticketing_tool')
             api_url.value = request.form.get('API_URL')
@@ -295,6 +296,42 @@ def admin():
             db.session.commit()
 
             flash('Config updated', category='success')
+            return redirect(url_for('views.admin'))
+    else:
+        flash('Access denied', category='error')
+        return redirect(url_for('views.home'))
+
+@views.route('/admin/approve_user', methods=['GET']) # Change to POST at some point!
+@login_required
+def approve_user():
+    if current_user.admin_flag == True:
+        if request.args.get('id') != None and request.args.get('id') != "":
+            user = User.query.filter(User.id == request.args.get('id')).first()
+            if user != None:
+                user.approved_flag = True
+                db.session.commit()
+                flash('User approved', category='success')
+            return redirect(url_for('views.admin'))
+        else:
+            flash('Error approving user', category='error')
+            return redirect(url_for('views.admin'))
+    else:
+        flash('Access denied', category='error')
+        return redirect(url_for('views.home'))
+
+@views.route('/admin/decline_user', methods=['GET']) # Change to POST at some point!
+@login_required
+def decline_user():
+    if current_user.admin_flag == True:
+        if request.args.get('id') != None and request.args.get('id') != "":
+            user = User.query.filter(User.id == request.args.get('id')).first()
+            if user != None:
+                User.query.filter(User.id == request.args.get('id')).delete()
+                db.session.commit()
+                flash('User declined', category='success')
+            return redirect(url_for('views.admin'))
+        else:
+            flash('Error declining user', category='error')
             return redirect(url_for('views.admin'))
     else:
         flash('Access denied', category='error')

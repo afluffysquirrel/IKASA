@@ -86,6 +86,7 @@ def init_data():
                 last_name="Aldred"
             )
             new_user.admin_flag = True
+            new_user.approved_flag = True
             s.add(new_user)
             s.commit()
 
@@ -95,6 +96,7 @@ def init_data():
                 first_name="Jezz",
                 last_name="A"
             )
+            new_user_2.approved_flag = True
             s.add(new_user_2)
             s.commit()
         

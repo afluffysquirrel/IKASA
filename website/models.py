@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(150))
     admin_flag = db.Column(db.Boolean)
     articles = db.relationship('Article')
+    approved_flag = db.Column(db.Boolean)
 
     def __init__(self, email, password, first_name, last_name):
         self.email = email
@@ -19,6 +20,7 @@ class User(db.Model, UserMixin):
         self.first_name = first_name
         self.last_name = last_name
         self.admin_flag = False
+        self.approved_flag = False
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
