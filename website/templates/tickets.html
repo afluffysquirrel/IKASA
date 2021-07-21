@@ -13,7 +13,7 @@
         <tbody>
         {% for ticket in tickets %}
           <tr onclick="window.location='/tickets/{{ticket.id}}';">
-            <th scope="row">{{ticket.reference}}</th>
+            <td scope="row"><b>{{ticket.reference}}</b></td>
             <td>{{ticket.short_description}}</td>
             <td>{{ticket.created_by}}</td>
           </tr>

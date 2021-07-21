@@ -19,7 +19,7 @@
         <tbody>
         {% for article in articles %}
           <tr onclick="window.location='/articles/{{article.id}}';">
-            <th scope="row">{{article.id}}</th>
+            <td scope="row"><b>{{article.id}}</b></td>
             <td>{{article.title}}</td>
             <td>{{article.creation_date}}</td>
           </tr>

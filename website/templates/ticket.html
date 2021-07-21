@@ -37,7 +37,7 @@
   <tbody>
   {% for result in query %}
     <tr onclick="window.location='/articles/{{result.Article.id}}';">
-      <th scope="row">{{result.Article.id}}</th>
+      <td scope="row"><b>{{result.Article.id}}</b></td>
       <td>{{result.Article.title}}</td>
       <td>{{result.Suggestion.similarity}}</td>
       <td>{{result.Article.creation_date}}</td>
