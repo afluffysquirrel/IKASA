@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash
 from .jobs import extract_tickets, calculate_suggestions
 import os 
 import time
+import gc
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -15,14 +16,18 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(24)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['SCHEDULER_API_ENABLED'] = True
+    app.config['SCHEDULER_EXECUTORS'] = {"default": {"type": "threadpool", "max_workers": 2}}
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
-
+    
     # Schedule job config
     def scheduled_job():
         with app.app_context():
             time.sleep(2)
             extract_tickets()
             calculate_suggestions()
+        gc.collect()
 
     scheduler = APScheduler()
     scheduler.init_app(app)
