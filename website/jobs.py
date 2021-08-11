@@ -29,8 +29,9 @@ def calculate_suggestions():
     from . import db
     from .models import Config, Ticket, Article, Suggestion
 
-    tickets = pd.read_sql_table(table_name = Ticket.__table__.name, con= db.session.connection(), index_col="id")
-    articles = pd.read_sql_table(table_name = Article.__table__.name, con= db.session.connection(), index_col="id")
+    #tickets = pd.read_sql_table(table_name = Ticket.__table__.name, con= db.session.connection(), index_col="id")
+    tickets = pd.read_sql_query("select * from Ticket order by created_on desc limit 100;", con = db.session.connection())
+    articles = pd.read_sql_table(table_name = Article.__table__.name, con = db.session.connection(), index_col="id")
 
     articles["tags"] = articles["tags"].str.replace(",","")
     articles = articles.applymap(lambda s:s.lower() if type(s) == str else s)
