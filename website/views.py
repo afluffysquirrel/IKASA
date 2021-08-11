@@ -14,7 +14,7 @@ from werkzeug.security import generate_password_hash
 from .jobs import extract_tickets, calculate_suggestions
 
 upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
-upload_path = 'uploads'
+upload_path = '/root/DC3010-IKASA/uploads'
 items_per_page = 20
 
 views = Blueprint('views', __name__)
@@ -183,7 +183,7 @@ def edit_article(id):
 @views.route('/uploads/<path:filename>', methods=['GET'])
 @login_required
 def upload(filename):
-    return send_from_directory("../" + upload_path, filename)
+    return send_from_directory(upload_path, filename)
 
 
 # Tickets

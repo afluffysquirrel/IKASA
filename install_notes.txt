@@ -9,11 +9,12 @@
 9.  pip3 install -r requirements.txt
 10.  'chmod a+x DC3010-IKASA/main.py'
 11.  'chmod a+x DC3010-IKASA/launcher.sh'
-12. Schedule cron to run main.py on boot '@reboot sh /root/DC3010-IKASA/launcher.sh'
 13. Port forward port 80 and 443 (Local ip tables and egress rules)
-14. chmod -R 775 /root/DC3010-IKASA/uploads
+14. chmod -R 755 /root/DC3010-IKASA/uploads
 15. chown root:root /root/DC3010-IKASA/uploads
-16. Reboot server
+16. Edit main.py to user waitress server not default app.run
+17. Reboot server
+18. Make service for app on boot
 
 Errors you may encounter
 ------------------------

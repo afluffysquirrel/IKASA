@@ -1,0 +1,11 @@
+[Unit]
+Description=IKASA
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /root/DC3010-IKASA/main.py
+
+[Install]
+WantedBy=multi-user.target
