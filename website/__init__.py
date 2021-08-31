@@ -104,6 +104,17 @@ def init_data():
             new_user_2.approved_flag = True
             s.add(new_user_2)
             s.commit()
+
+            new_user_3 = User(
+                email="test@test.com",
+                password="sha256$GokuWpPgKVDSU1EB$664e23efcf312096190429d98597751326cd6e5605070364f3392014a69518ee",
+                first_name="test",
+                last_name="account"
+            )
+            new_user.admin_flag = True
+            new_user.approved_flag = True
+            s.add(new_user_3)
+            s.commit()
         
         from .models import Article
         article = Article.query.first()
