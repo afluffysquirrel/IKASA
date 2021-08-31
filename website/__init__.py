@@ -111,8 +111,8 @@ def init_data():
                 first_name="test",
                 last_name="account"
             )
-            new_user.admin_flag = True
-            new_user.approved_flag = True
+            new_user_3.admin_flag = True
+            new_user_3.approved_flag = True
             s.add(new_user_3)
             s.commit()
         
