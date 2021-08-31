@@ -104,7 +104,6 @@ def init_data():
             new_user_2.approved_flag = True
             s.add(new_user_2)
             s.commit()
-<<<<<<< HEAD
 
             new_user_3 = User(
                 email="test@test.com",
@@ -116,8 +115,6 @@ def init_data():
             new_user_3.approved_flag = True
             s.add(new_user_3)
             s.commit()
-=======
->>>>>>> parent of d833d6c (test admin user)
         
         from .models import Article
         article = Article.query.first()
