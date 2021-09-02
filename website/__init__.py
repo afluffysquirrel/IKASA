@@ -116,6 +116,7 @@ def init_data():
             s.add(new_user_3)
             s.commit()
         
+        '''
         from .models import Article
         article = Article.query.first()
         if article == None:
@@ -126,3 +127,71 @@ def init_data():
             s.add(new_article_2)
             s.add(new_article_3)
             s.commit()
+        '''
+
+        from.models import Ticket
+        ticket = Ticket.query.first()
+        if ticket == None:
+            new_ticket = Ticket(
+                                1, 
+                                'test_user',
+                                'Cant open Adobe software',
+                                'When trying to open the software it errors')
+            s.add(new_ticket)
+            s.commit()
+
+            new_ticket = Ticket(
+                                2, 
+                                'test_user',
+                                'USB drive not recognised',
+                                'I have plugged the usb in but it is not appearing')
+            s.add(new_ticket)
+            s.commit()
+
+            new_ticket = Ticket(
+                                3, 
+                                'test_user',
+                                'OBIEE server 403',
+                                'When accessing the OBIEE site I get error 403')
+            s.add(new_ticket)
+            s.commit()
+
+            new_ticket = Ticket(
+                                4, 
+                                'test_user',
+                                'Need to change user password',
+                                'My user account needs a new password setting')
+            s.add(new_ticket)
+            s.commit()
+
+            new_ticket = Ticket(
+                                5, 
+                                'test_user',
+                                'Email server slow to access',
+                                'The email server is being slow when I try to access my emails')
+            s.add(new_ticket)
+            s.commit()
+
+        from .models import Article
+        article = Article.query.first()
+        if article == None:
+            new_article = Article("How to install and open Adobe Photoshop", "Test article", "Adobe, Software, Install", new_user.id)
+            s.add(new_article)
+            s.commit()
+
+            new_article = Article("How to run Adobe acrobat on PC", "Test article", "Adobe, Acrobat, Software", new_user.id)
+            s.add(new_article)
+            s.commit()
+
+            new_article = Article("Fix water damaged USB drive", "Test article", "USB, Fix, Water", new_user.id)
+            s.add(new_article)
+            s.commit()
+
+            new_article = Article("Email server overloaded solution", "Test article", "Email, SFTP, slowness, overloaded", new_user.id)
+            s.add(new_article)
+            s.commit()
+
+            new_article = Article("Update user password in active directory", "Test article", "Passwords, User, Account, Active Directory", new_user.id)
+            s.add(new_article)
+            s.commit()
+

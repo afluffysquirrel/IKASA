@@ -123,13 +123,17 @@ def add_article():
 @login_required
 def delete_article(id):
     articles = Article.query.filter(Article.id == id)
-    if articles[0].created_by == current_user.id or current_user.admin_flag == True:
-        db.session.query(Article).filter(Article.id==id).delete()
-        db.session.commit()
-        flash('Article deleted', category='success')
-        return redirect(url_for('views.articles'))
+    if articles.count() > 0:
+        if articles[0].created_by == current_user.id or current_user.admin_flag == True:
+            db.session.query(Article).filter(Article.id==id).delete()
+            db.session.commit()
+            flash('Article deleted', category='success')
+            return redirect(url_for('views.articles'))
+        else:
+            flash('You cannot edit or delete other users articles', category='error')
+            return redirect(url_for('views.article', id=id))
     else:
-        flash('You cannot edit or delete other users articles', category='error')
+        flash('Couldnt delete article, did not exist', category='error')
         return redirect(url_for('views.article', id=id))
 
 @views.route('/articles/edit/<id>', methods=['POST'])

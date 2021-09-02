@@ -3,3 +3,5 @@ website/__pycache__
 website/database.db
 uploads/*
 website/static/model/*
+website/.DS_Store
+*.pyc
