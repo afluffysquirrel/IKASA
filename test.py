@@ -174,6 +174,16 @@ class FlaskTest(unittest.TestCase):
             follow_redirects=True
         )
         self.assertTrue(b'id="error-alert"' in response.data)   
+
+    def test_delete_article_logged_out(self):
+        tester = app.test_client(self)
+        response = tester.post(
+            '/articles/delete/1',
+            data = None,
+            follow_redirects = False
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, '/login')
     
     def test_delete_existing_article(self):
         tester = app.test_client(self)
@@ -184,7 +194,7 @@ class FlaskTest(unittest.TestCase):
             follow_redirects=False
         )
         response = tester.post(
-            '/articles/delete/1',
+            '/articles/delete/2',
             data = None,
             follow_redirects = True
         )
@@ -202,10 +212,18 @@ class FlaskTest(unittest.TestCase):
         response = tester.post(
             '/articles/delete/99999',
             data = None,
-            follow_redirects = False
+            follow_redirects = True
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'id="error-alert"' in response.data)  
+        self.assertTrue(b'id="error-alert"' in response.data) 
+
+
+        #####################
+        ### Account tests ###
+        #####################
+
+        
+
 
 if __name__ == '__main__':
     unittest.main()
