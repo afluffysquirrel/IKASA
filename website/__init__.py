@@ -106,8 +106,8 @@ def init_data():
             s.commit()
 
             new_user_3 = User(
-                email="test@test.com",
-                password="sha256$GokuWpPgKVDSU1EB$664e23efcf312096190429d98597751326cd6e5605070364f3392014a69518ee",
+                email="admin@email.com",
+                password="sha256$fQBYKzsb8r2XZl0h$9f73104475986e7f385c80238ee77f0eb6a950bcfe0111bff405a086aa922d26",
                 first_name="test",
                 last_name="account"
             )

@@ -218,12 +218,11 @@ class FlaskTest(unittest.TestCase):
         self.assertTrue(b'id="error-alert"' in response.data) 
 
 
-        #####################
-        ### Account tests ###
-        #####################
+    #####################
+    ### Account tests ###
+    #####################
 
-        
-
+    
 
 if __name__ == '__main__':
     unittest.main()
