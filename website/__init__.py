@@ -133,7 +133,7 @@ def init_data():
         ticket = Ticket.query.first()
         if ticket == None:
             new_ticket = Ticket(
-                                1, 
+                                'INC0000000', 
                                 'test_user',
                                 'Cant open Adobe software',
                                 'When trying to open the software it errors')
@@ -141,7 +141,7 @@ def init_data():
             s.commit()
 
             new_ticket = Ticket(
-                                2, 
+                                'INC0000001', 
                                 'test_user',
                                 'USB drive not recognised',
                                 'I have plugged the usb in but it is not appearing')
@@ -149,7 +149,7 @@ def init_data():
             s.commit()
 
             new_ticket = Ticket(
-                                3, 
+                                'INC0000002', 
                                 'test_user',
                                 'OBIEE server 403',
                                 'When accessing the OBIEE site I get error 403')
@@ -157,7 +157,7 @@ def init_data():
             s.commit()
 
             new_ticket = Ticket(
-                                4, 
+                                'INC0000003', 
                                 'test_user',
                                 'Need to change user password',
                                 'My user account needs a new password setting')
@@ -165,7 +165,7 @@ def init_data():
             s.commit()
 
             new_ticket = Ticket(
-                                5, 
+                                'INC0000004', 
                                 'test_user',
                                 'Email server slow to access',
                                 'The email server is being slow when I try to access my emails')
