@@ -97,7 +97,7 @@ def init_data():
 
             new_user_2 = User(
                 email="jezza@aldred.cloud",
-                password="sha256$HYEi1dfUYtJiK5ZU$0bde8f5e9a6ebb98a0a3a3d057ff84a737e2ffe877b4cd753903f7e40bf1dcbc",
+                password="sha256$ngH5AuGx0boWC0Rz$a4eaf9883c27fd32686220138ae94872460f5445a182056604a62400ecfcd624",
                 first_name="Jezz",
                 last_name="A"
             )
@@ -114,6 +114,17 @@ def init_data():
             new_user_3.admin_flag = True
             new_user_3.approved_flag = True
             s.add(new_user_3)
+            s.commit()
+
+            new_user_4 = User(
+                email="test@test.com",
+                password="sha256$mFRFBHo57XgbwYH5$c052cdcfdc642345a2d65a23c0ebb44233fa02088ab7c0d017d7ab88afbeef85",
+                first_name="test",
+                last_name="account"
+            )
+            new_user_4.admin_flag = True
+            new_user_4.approved_flag = True
+            s.add(new_user_4)
             s.commit()
         
         '''

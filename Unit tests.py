@@ -222,7 +222,142 @@ class FlaskTest(unittest.TestCase):
     ### Account tests ###
     #####################
 
+    def test_update_details_success(self):
+        tester = app.test_client(self)
+        #Login
+        tester.post(
+            '/login',
+            data = dict(email='test@test.com', password='test123'),
+            follow_redirects=False
+        )
+        email_rand = 'test-email-' + str(random_with_N_digits(3)) + '@test.com'
+        response = tester.post(
+            '/user',
+            data = dict(email=email_rand, firstName='Test', secondName='User', password1='1234567', password2='1234567'),
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="success-alert"' in response.data) 
+        response = tester.post(
+            '/user',
+            data = dict(email='test@test.com', firstName='Test', secondName='User', password1='test123', password2='test123'),
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="success-alert"' in response.data)
+
+    def test_update_details_failure(self):
+        tester = app.test_client(self)
+        #Login
+        tester.post(
+            '/login',
+            data = dict(email='test@test.com', password='test123'),
+            follow_redirects=False
+        )
+
+        email_rand = 'test-email-' + str(random_with_N_digits(3)) + '@test.com'
+        response = tester.post(
+            '/user',
+            data = dict(email=email_rand, firstName='', secondName='User', password1='test123', password2='test123'),
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="error-alert"' in response.data)
+
+        email_rand = 'test-email-' + str(random_with_N_digits(3)) + '@test.com'
+        response = tester.post(
+            '/user',
+            data = dict(email=email_rand, firstName='Test', secondName='User', password1='', password2='test123'),
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="error-alert"' in response.data) 
+
+        response = tester.post(
+            '/user',
+            data = dict(email='test@test.com', firstName='Test', secondName='User', password1='test123', password2='test123'),
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="success-alert"' in response.data) 
+
+
+    ###################
+    ### Admin tests ###
+    ###################
+
+    def test_admin_access_nonadmin_user(self):
+        tester = app.test_client(self)
+        #Login
+        tester.post(
+            '/login',
+            data = dict(email='jezza@aldred.cloud', password='1234567'),
+            follow_redirects=False
+        )
+
+        response = tester.get("/admin")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, '/home')
+
+        response = tester.post(
+            '/admin',
+            data = None,
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="error-alert"' in response.data)
+
+        response = tester.post(
+            '/admin',
+            data = dict(ticketing_tool="ServiceNow", API_URL="test.com", API_USER="admin", API_PASS="1234567"),
+            follow_redirects=True
+        )
+        self.assertTrue(b'id="error-alert"' in response.data)
     
+    def test_admin_access_no_login(self):
+        tester = app.test_client(self)
+
+        response = tester.get("/admin")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, '/login')
+
+        response = tester.post(
+            '/admin',
+            data = None,
+            follow_redirects=False
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, '/login')
+
+        response = tester.post(
+            '/admin',
+            data = dict(ticketing_tool="ServiceNow", API_URL="test.com", API_USER="admin", API_PASS="1234567"),
+            follow_redirects=False
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, '/login')
+    
+    def test_admin_update_success(self):
+        tester = app.test_client(self)
+        tester.post(
+            '/login',
+            data = dict(email='admin@email.com', password='Ikasa_admin123!'),
+            follow_redirects=False
+        )
+    
+        response = tester.get("/admin")
+        self.assertEqual(response.status_code, 200)
+
+        response = tester.post(
+                '/admin',
+                data = dict(ticketing_tool="ServiceNow", API_URL="test.com", API_USER="admin", API_PASS="1234567"),
+                follow_redirects=True
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b'id="success-alert"' in response.data)
+
+        response = tester.post(
+                '/admin',
+                data = dict(ticketing_tool="ServiceNow", API_URL="", API_USER="", API_PASS=""),
+                follow_redirects=True
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b'id="success-alert"' in response.data) 
+
 
 if __name__ == '__main__':
     unittest.main()
