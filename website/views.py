@@ -203,7 +203,7 @@ def tickets():
                 Ticket.short_description.like(look_for),
                 Ticket.reference.like(look_for)
             )
-        )
+        ).order_by(Ticket.reference.desc())
         return render_template("tickets.html", user=current_user, tickets=tickets, pages=1, search=request.args.get('search'))
     else:
         # If not search
@@ -213,12 +213,12 @@ def tickets():
         if request.args.get('page') != None:
             page_number = int(request.args.get('page'))
             row_start = (page_number-1) * items_per_page
-            tickets = Ticket.query.offset(row_start).limit(items_per_page)
+            tickets = Ticket.query.order_by(Ticket.reference.desc()).offset(row_start).limit(items_per_page)
             return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, page_number=page_number,  search=request.args.get('search'))
             
         #Return page 1
         else:
-            tickets = Ticket.query.limit(items_per_page)
+            tickets = Ticket.query.order_by(Ticket.reference.desc()).limit(items_per_page)
             return render_template("tickets.html", user=current_user, tickets=tickets, pages=pages, search=request.args.get('search'))
 
 @views.route('/tickets/<id>', methods=['GET'])
