@@ -4,14 +4,14 @@
 4.  Install pip3
 5.  Install apache2
 6.  Install libapache2-mod-wsgi
-7.  'git clone https://github.com/afluffysquirrel/DC3010-IKASA.git'
-8.  cd DC3010-IKASA
+7.  'git clone https://github.com/christopher-aldred/IKASA.git'
+8.  cd IKASA
 9.  pip3 install -r requirements.txt
 10.  'chmod a+x main.py'
 11.  'chmod a+x launcher.sh'
 13. Port forward port 80 and 443 (Local ip tables and egress rules)
-14. chmod -R 755 /root/DC3010-IKASA/uploads
-15. chown root:root /root/DC3010-IKASA/uploads
+14. chmod -R 755 /root/IKASA/uploads
+15. chown root:root /root/IKASA/uploads
 16. Edit main.py to user waitress server not default app.run
 17. Reboot server
 18. Make service for app on boot
@@ -33,5 +33,5 @@ pkill main
 launcher.sh
 -------------------
 #!/bin/sh
-cd /root/DC3010-IKASA/
+cd /root/IKASA/
 ./main.py

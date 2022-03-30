@@ -79,7 +79,8 @@ def calculate_suggestions():
 
         queries = [row['soup']]
         query_embeddings = embedder.encode(queries)
-
+        
+        # Calculating cosine similarity (Match Strength)
         for query, query_embedding in zip(queries, query_embeddings):
             distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
 
@@ -223,4 +224,4 @@ def write_back_API(ticket_ref):
                     console_log("Response - " + str(response.status_code), 'error')
 
             except:
-                console_log("WriteBack 'Check URLs'", 'error')
+                console_log("Write back failed", 'error')
