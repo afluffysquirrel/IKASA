@@ -1,11 +1,45 @@
-import re
+from random import randint
+import uuid
+
 from . import create_database, db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 from datetime import date
+from flask_sqlalchemy import SQLAlchemy
+
+def generate_user_id():
+    min_ = 100000
+    max_ = 999999
+    rand = randint(min_, max_)
+    
+    while SQLAlchemy().session().query(User).filter(id == rand).limit(1).first() is not None:
+        rand = randint(min_, max_)
+
+    return rand
+
+def generate_ticket_ref():
+    min_ = 100000
+    max_ = 999999
+    rand = "T" + str(randint(min_, max_))
+    
+    while SQLAlchemy().session().query(Ticket).filter(id == rand).limit(1).first() is not None:
+        rand = "T" + str(randint(min_, max_))
+
+    return rand
+
+def generate_article_id():
+    min_ = 100000
+    max_ = 999999
+    rand = "A" + str(randint(min_, max_))
+    
+    while SQLAlchemy().session().query(Article).filter(id == rand).limit(1).first() is not None:
+        rand = "A" + str(randint(min_, max_))
+
+    return rand
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
+    #id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer,  default=generate_user_id, unique=True, primary_key=True)
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
@@ -23,7 +57,8 @@ class User(db.Model, UserMixin):
         self.approved_flag = False
 
 class Ticket(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    #id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String,  default=generate_ticket_ref, unique=True, primary_key=True)
     reference = db.Column(db.String(32))
     created_on = db.Column(db.Date())
     created_by = db.Column(db.String(128))
@@ -38,7 +73,8 @@ class Ticket(db.Model):
         self.long_description = long_description
 
 class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    #id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String,  default=generate_article_id, unique=True, primary_key=True)
     title = db.Column(db.String(128))
     body = db.Column(db.String(4096))
     tags = db.Column(db.String(128))
@@ -61,12 +97,12 @@ class Article(db.Model):
 class Suggestion(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
     article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
-    ticket_id = db.Column(db.String, db.ForeignKey('ticket.reference'))
+    ticket_ref = db.Column(db.String, db.ForeignKey('ticket.reference'))
     similarity = db.Column(db.Float)
 
-    def __init__(self, article_id, ticket_id, similarity):
+    def __init__(self, article_id, ticket_ref, similarity):
         self.article_id = article_id
-        self.ticket_id = ticket_id
+        self.ticket_ref = ticket_ref
         self.similarity = similarity
 
 class Attachment(db.Model):
@@ -86,3 +122,10 @@ class Config(db.Model):
     def __init__(self, look_up, value):
         self.look_up = look_up
         self.value = value
+
+class WriteBack(db.Model): 
+    id = db.Column(db.Integer, primary_key=True)
+    ticket_ref = db.Column(db.String, db.ForeignKey('ticket.reference'))
+
+    def __init__(self, ticket_ref):
+        self.ticket_ref = ticket_ref

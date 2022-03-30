@@ -15,7 +15,7 @@ DB_NAME = "database.db"
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(24)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}?check_same_thread=False'
     app.config['SCHEDULER_API_ENABLED'] = True
     app.config['SCHEDULER_EXECUTORS'] = {"default": {"type": "threadpool", "max_workers": 2}}
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -72,13 +72,15 @@ def init_data():
         config = Config.query.first()
         if config == None:
             new_config_1 = Config("rest_api_user", "admin")
-            new_config_2 = Config("rest_api_pass", "O9PvrmPpFoG8")
+            new_config_2 = Config("rest_api_pass", "vqcZZ7bU4sXQ")
             new_config_3 = Config("rest_api_ticketing_tool", "ServiceNow")
-            new_config_4 = Config("rest_api_url", "https://dev104044.service-now.com")
+            new_config_4 = Config("rest_api_url", "https://dev97528.service-now.com")
+            new_config_5 = Config("host_url", "")
             s.add(new_config_1)
             s.add(new_config_2)
             s.add(new_config_3)
             s.add(new_config_4)
+            s.add(new_config_5)
             s.commit()
 
         from .models import User
@@ -140,12 +142,13 @@ def init_data():
             s.commit()
         '''
 
+        '''
         from.models import Ticket
         ticket = Ticket.query.first()
         if ticket == None:
             new_ticket = Ticket(
                                 'INC0000000', 
-                                'test_user',
+                                'JoeBlogs',
                                 'Cant open Adobe software',
                                 'When trying to open the software it errors')
             s.add(new_ticket)
@@ -153,7 +156,7 @@ def init_data():
 
             new_ticket = Ticket(
                                 'INC0000001', 
-                                'test_user',
+                                'TeaDrinker567',
                                 'USB drive not recognised',
                                 'I have plugged the usb in but it is not appearing')
             s.add(new_ticket)
@@ -161,7 +164,7 @@ def init_data():
 
             new_ticket = Ticket(
                                 'INC0000002', 
-                                'test_user',
+                                'OracleDude1',
                                 'OBIEE server 403',
                                 'When accessing the OBIEE site I get error 403')
             s.add(new_ticket)
@@ -169,7 +172,7 @@ def init_data():
 
             new_ticket = Ticket(
                                 'INC0000003', 
-                                'test_user',
+                                'AmnesiaGal1994',
                                 'Need to change user password',
                                 'My user account needs a new password setting')
             s.add(new_ticket)
@@ -177,16 +180,21 @@ def init_data():
 
             new_ticket = Ticket(
                                 'INC0000004', 
-                                'test_user',
+                                'Sammy_IT_Person',
                                 'Email server slow to access',
                                 'The email server is being slow when I try to access my emails')
             s.add(new_ticket)
             s.commit()
+            '''
 
         from .models import Article
         article = Article.query.first()
         if article == None:
-            new_article = Article("How to install and open Adobe Photoshop", "Test article", "Adobe, Software, Install", new_user.id)
+            new_article = Article("How to install and open Adobe Photoshop",
+            "Test article",
+            "Adobe, Software, Install",
+            new_user.id)
+            
             s.add(new_article)
             s.commit()
 
@@ -205,4 +213,3 @@ def init_data():
             new_article = Article("Update user password in active directory", "Test article", "Passwords, User, Account, Active Directory", new_user.id)
             s.add(new_article)
             s.commit()
-

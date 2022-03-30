@@ -235,7 +235,7 @@ def ticket(id):
         return redirect(url_for('views.tickets'))
     else:
         query = db.session.query(Article, Ticket, Suggestion) \
-        .filter(Suggestion.article_id == Article.id, Suggestion.ticket_id == Ticket.reference, Suggestion.ticket_id == ticket.reference) \
+        .filter(Suggestion.article_id == Article.id, Suggestion.ticket_ref == Ticket.reference, Suggestion.ticket_ref == ticket.reference) \
         .order_by(Suggestion.similarity.desc()).all()
 
         return render_template("ticket.html", user=current_user, ticket=ticket, query=query)
@@ -286,16 +286,18 @@ def admin():
     api_url = Config.query.filter(Config.look_up == "rest_api_url").first()
     api_user = Config.query.filter(Config.look_up == "rest_api_user").first()
     api_pass = Config.query.filter(Config.look_up == "rest_api_pass").first()
+    host_url = Config.query.filter(Config.look_up == "host_url").first()
 
     if current_user.admin_flag == True:
         if request.method == 'GET':
             unapproved_users = User.query.filter(User.approved_flag == False)
-            return render_template("admin.html", user=current_user, ticketing_tool=ticketing_tool.value, api_url=api_url.value, api_user=api_user.value, api_pass=api_pass.value, unapproved_users=unapproved_users)
+            return render_template("admin.html", user=current_user, ticketing_tool=ticketing_tool.value, api_url=api_url.value, api_user=api_user.value, api_pass=api_pass.value, host_url=host_url.value, unapproved_users=unapproved_users)
         if request.method == 'POST':
             ticketing_tool.value = request.form.get('ticketing_tool')
             api_url.value = request.form.get('API_URL')
             api_user.value = request.form.get('API_USER')
             api_pass.value = request.form.get('API_PASS')
+            host_url.value = request.form.get('HOST_URL')
 
             db.session.commit()
 

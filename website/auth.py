@@ -20,6 +20,8 @@ def login():
                 if user.approved_flag == True:
                     flash('Logged in successfully!', category='success')
                     login_user(user, remember=True)
+                    if request.args.get('next') != None and request.args.get('next') != "":
+                        return redirect(request.args.get('next'), code=302)
                     return redirect(url_for('views.home'))
                 else:
                     flash('Account not yet approved', category='error')
