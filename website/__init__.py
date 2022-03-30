@@ -33,8 +33,9 @@ def create_app():
     scheduler.init_app(app)
     scheduler.start()
 
-    from .views import views
-    from .auth import auth
+    with app.app_context():
+        from .views import views
+        from .auth import auth
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
@@ -98,94 +99,16 @@ def init_data():
             s.commit()
 
             new_user_2 = User(
-                email="jezza@aldred.cloud",
-                password="sha256$ngH5AuGx0boWC0Rz$a4eaf9883c27fd32686220138ae94872460f5445a182056604a62400ecfcd624",
-                first_name="Jezz",
-                last_name="A"
-            )
-            new_user_2.approved_flag = True
-            s.add(new_user_2)
-            s.commit()
-
-            new_user_3 = User(
                 email="admin@email.com",
                 password="sha256$fQBYKzsb8r2XZl0h$9f73104475986e7f385c80238ee77f0eb6a950bcfe0111bff405a086aa922d26",
                 first_name="test",
                 last_name="account"
             )
-            new_user_3.admin_flag = True
-            new_user_3.approved_flag = True
-            s.add(new_user_3)
+            new_user_2.admin_flag = True
+            new_user_2.approved_flag = True
+            s.add(new_user_2)
             s.commit()
 
-            new_user_4 = User(
-                email="test@test.com",
-                password="sha256$mFRFBHo57XgbwYH5$c052cdcfdc642345a2d65a23c0ebb44233fa02088ab7c0d017d7ab88afbeef85",
-                first_name="test",
-                last_name="account"
-            )
-            new_user_4.admin_flag = True
-            new_user_4.approved_flag = True
-            s.add(new_user_4)
-            s.commit()
-        
-        '''
-        from .models import Article
-        article = Article.query.first()
-        if article == None:
-            new_article = Article("OBIEE server 403", "Hit the DBA button", "OBIEE, Network, DBA", new_user.id)
-            new_article_2 = Article("CMOD529 reached timeout value", "Check BI XMLP server jobs all completed OK", "BI XMLP, Dev", new_user.id)
-            new_article_3 = Article("Test user access", "Slow down there nelly", "Accounts, users", new_user_2.id)
-            s.add(new_article)
-            s.add(new_article_2)
-            s.add(new_article_3)
-            s.commit()
-        '''
-
-        '''
-        from.models import Ticket
-        ticket = Ticket.query.first()
-        if ticket == None:
-            new_ticket = Ticket(
-                                'INC0000000', 
-                                'JoeBlogs',
-                                'Cant open Adobe software',
-                                'When trying to open the software it errors')
-            s.add(new_ticket)
-            s.commit()
-
-            new_ticket = Ticket(
-                                'INC0000001', 
-                                'TeaDrinker567',
-                                'USB drive not recognised',
-                                'I have plugged the usb in but it is not appearing')
-            s.add(new_ticket)
-            s.commit()
-
-            new_ticket = Ticket(
-                                'INC0000002', 
-                                'OracleDude1',
-                                'OBIEE server 403',
-                                'When accessing the OBIEE site I get error 403')
-            s.add(new_ticket)
-            s.commit()
-
-            new_ticket = Ticket(
-                                'INC0000003', 
-                                'AmnesiaGal1994',
-                                'Need to change user password',
-                                'My user account needs a new password setting')
-            s.add(new_ticket)
-            s.commit()
-
-            new_ticket = Ticket(
-                                'INC0000004', 
-                                'Sammy_IT_Person',
-                                'Email server slow to access',
-                                'The email server is being slow when I try to access my emails')
-            s.add(new_ticket)
-            s.commit()
-            '''
 
         from .models import Article
         article = Article.query.first()

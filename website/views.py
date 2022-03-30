@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, flash, send_from_directory
+from flask import current_app as app
 from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
@@ -14,8 +15,11 @@ from werkzeug.security import generate_password_hash
 from .jobs import extract_tickets, calculate_suggestions
 
 upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
-upload_path = '/root/DC3010-IKASA/uploads'
+
 items_per_page = 20
+
+with app.app_context():
+        upload_path = os.path.dirname(app.instance_path) + '/uploads'
 
 views = Blueprint('views', __name__)
 
