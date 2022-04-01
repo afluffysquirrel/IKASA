@@ -7,13 +7,14 @@
 7.  'git clone https://github.com/christopher-aldred/IKASA.git'
 8.  cd IKASA
 9.  pip3 install -r requirements.txt
-10.  'chmod a+x main.py'
+10. 'chmod a+x main.py'
 11. Port forward port 80 and 443 (Local ip tables and egress rules)
 12. chmod -R 755 /root/IKASA/uploads
 13. chown root:root /root/IKASA/uploads
 14. Edit main.py to user waitress server not default app.run
-15. Reboot server
-16. Make service for app on boot
+15. Create ikasa.service @ /etc/systemd/system/ (Details below)
+16. 'systemctl start ikasa.service'
+17. 'systemctl enable ikasa.service'
 
 Errors you may encounter
 ------------------------
