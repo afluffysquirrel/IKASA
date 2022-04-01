@@ -47,7 +47,8 @@ def calculate_suggestions():
     
     # Collect data used by model into 'soup'
     tickets['soup'] = tickets['short_description'] + " " + tickets['long_description']
-    articles['soup'] = articles['title'] + " " + articles['body'] + " " + articles['tags']
+    articles['soup'] = articles['title'] + " " + articles['tags']
+    #articles['soup'] = articles['title'] + " " + articles['body'] + " " + articles['tags']
 
     corpus = []
     articleIDs = []
@@ -93,7 +94,7 @@ def calculate_suggestions():
                     #query = corpus[idx].strip()
                     article_id = articleIDs[idx]
 
-                    # print(ticket_ref + " " + article_id + " " + query + " " + str(round((1-distance),2)))
+                    print(ticket_ref + " " + article_id + " " + str(query) + " " + str(round((1-distance),2)))
                     
                     # Checking suggestion doesnt already exist
                     query = Suggestion.query.filter(Suggestion.article_id==article_id, Suggestion.ticket_ref==ticket_ref).first()
