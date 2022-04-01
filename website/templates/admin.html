@@ -45,6 +45,7 @@
             Save
             </button>
         </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     </form>
     <br/>
     <h1 align="center">Unapproved users</h1>
@@ -61,7 +62,14 @@
           <tr>
             <td scope="row"><b>{{user.id}}</b></td>
             <td>{{user.email}}</td>
-            <td><a href="/admin/approve_user?id={{user.id}}">Approve</a> | <a href="/admin/decline_user?id={{user.id}}">Decline</a></td>
+            <td>
+              <form method="post">
+                <button type="submit" style="background: none; border: none; color: #1a0dab; text-decoration: underline; cursor: pointer;" name="approve" formaction="/admin/approve_user?id={{user.id}}">Approve</button>
+                 | 
+                <button type="submit" style="background: none; border: none; color: #1a0dab; text-decoration: underline; cursor: pointer;" name="decline" formaction="/admin/decline_user?id={{user.id}}">Decline</button>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              </form>
+            </td>
           </tr>
         {% endfor %}
         </tbody>

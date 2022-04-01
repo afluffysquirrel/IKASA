@@ -14,7 +14,7 @@ import os
 from werkzeug.security import generate_password_hash
 from .jobs import extract_tickets, calculate_suggestions
 
-upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt']
+upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt', '.zip']
 
 items_per_page = 20
 
@@ -24,7 +24,7 @@ with app.app_context():
 views = Blueprint('views', __name__)
 
 # Home
-@views.route('/', methods=['GET', 'POST'])
+@views.route('/', methods=['GET'])
 def root():
     return redirect(url_for('views.home'))
 
@@ -311,7 +311,7 @@ def admin():
         flash('Access denied', category='error')
         return redirect(url_for('views.home'))
 
-@views.route('/admin/approve_user', methods=['GET']) # Change to POST at some point!
+@views.route('/admin/approve_user', methods=['POST']) # Change to POST at some point!
 @login_required
 def approve_user():
     if current_user.admin_flag == True:
@@ -329,7 +329,7 @@ def approve_user():
         flash('Access denied', category='error')
         return redirect(url_for('views.home'))
 
-@views.route('/admin/decline_user', methods=['GET']) # Change to POST at some point!
+@views.route('/admin/decline_user', methods=['POST']) # Change to POST at some point!
 @login_required
 def decline_user():
     if current_user.admin_flag == True:

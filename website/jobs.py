@@ -54,8 +54,8 @@ def calculate_suggestions():
 
     for index, row in articles.iterrows():
 
-        # Remove duplicates from article
-        row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
+        # Remove duplicates from article - Removed as retaining sentence structure generates more accurate suggestions
+        # row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
 
         # Remove special chars from article
         row['soup'] = row['soup'].replace('\W', '')
@@ -71,8 +71,8 @@ def calculate_suggestions():
         suggestionFlag = False
         ticket_ref = ""
 
-        # Remove duplicates from ticket
-        row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
+        # Remove duplicates from ticket - Removed as retaining sentence structure generates more accurate suggestions
+        # row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
 
         # Remove special chars from ticket
         row['soup'] = row['soup'].replace('\W', '')

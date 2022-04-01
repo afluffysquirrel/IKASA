@@ -6,3 +6,4 @@ website/static/model/*
 website/.DS_Store
 *.pyc
 .DS_Store
+.VSCodeCounter
