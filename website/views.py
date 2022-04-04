@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, send_from_directory
+from flask import Blueprint, abort, render_template, request, flash, send_from_directory
 from flask import current_app as app
 from flask.helpers import url_for
 from flask_login import login_required, current_user
@@ -144,6 +144,7 @@ def delete_article(id):
     if articles.count() > 0:
         if articles[0].created_by == current_user.id or current_user.admin_flag == True:
             db.session.query(Article).filter(Article.id==id).delete()
+            db.session.query(Suggestion).filter(Suggestion.article_id==id).delete()
             db.session.commit()
             flash('Article deleted', category='success')
             return redirect(url_for('views.articles'))
@@ -200,13 +201,34 @@ def edit_article(id):
         flash('You cannot edit or delete other users articles', category='error')
         return redirect(url_for('views.article', id=id))
 
-
 # Uploads
-@views.route('/uploads/<path:filename>', methods=['GET'])
+@views.route('/uploads/<arg>', methods=['GET', 'POST'])
 @login_required
-def upload(filename):
-    return send_from_directory(upload_path, filename)
-
+def upload(arg):
+    if request.method == 'GET':
+        return send_from_directory(upload_path, arg)
+    if request.method == 'POST':
+        # added hidden _method parameter as html doesnt support DELETE from forms
+        if(request.form.get('_method') == 'DELETE'):
+            attachments = Attachment.query.filter(Attachment.id == arg)
+            if attachments.count() > 0:
+                article_id = attachments[0].article_id
+                articles = Article.query.filter(Article.id == article_id)
+                if articles.count() > 0:
+                    if articles[0].created_by == current_user.id or current_user.admin_flag == True:
+                        os.remove(os.path.join(upload_path, attachments[0].file_name))
+                        db.session.query(Attachment).filter(Attachment.id==arg).delete()
+                        db.session.commit()
+                        flash('Attachment deleted')
+                    else:
+                        flash('Delete failed - access denied', category='error')
+                else:
+                    flash('Error deleting attachment', category='error')
+            else:
+                flash('Error deleting attachment', category='error')
+        else:
+            flash('Delete method not specified', category='error')
+        return redirect(request.referrer)
 
 # Tickets
 @views.route('/tickets', methods=['GET'])
