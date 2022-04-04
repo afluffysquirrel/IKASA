@@ -43,7 +43,7 @@ def home():
     
     info_message = "Application status is good, please continue to add and update knowledge articles."
 
-    if((ticket_count / tick_suggest_count) > 2):
+    if(((ticket_count - tick_suggest_count) / tick_suggest_count) > 2):
         info_message = "Your ratio of tickets with suggestions to those without is low! Try adding more knowledge articles to boost this."
     elif(avg_match_strength < 0.45):
         info_message = str(avg_match_strength) + " Your average match strength is low, try adding more detail into ticket and article titles, descriptions and tags."
