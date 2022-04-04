@@ -34,7 +34,13 @@ def home():
     article_count = Article.query.count()
     ticket_count = Ticket.query.count()
     suggestion_count = Suggestion.query.count()
-    return render_template("home.html", user=current_user, article_count=article_count, ticket_count=ticket_count, suggestion_count=suggestion_count)
+
+    weak_count = Suggestion.query.filter(and_(Suggestion.similarity >= 0.3, Suggestion.similarity < 0.45)).count()
+    mod_count = Suggestion.query.filter(and_(Suggestion.similarity >= 0.45, Suggestion.similarity < 0.6)).count()
+    strong_count = Suggestion.query.filter(and_(Suggestion.similarity >= 0.6, Suggestion.similarity < 1.0)).count()
+    tick_suggest_count = db.session.query(Suggestion.ticket_ref).distinct().count()
+
+    return render_template("home.html", user=current_user, article_count=article_count, ticket_count=ticket_count, suggestion_count=suggestion_count, weak_count=weak_count, mod_count=mod_count, strong_count=strong_count, tick_suggest_count=tick_suggest_count)
 
 
 # Articles

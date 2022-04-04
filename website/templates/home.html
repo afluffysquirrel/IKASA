@@ -21,5 +21,87 @@
       <h2>{{suggestion_count}}</h2>
     </div>
   </div>
+  <br/>
+  <div class="row">
+    <div align="center" class="col-3 border border-primary rounded" style="padding-top: 10px;">
+      <h5>Ticket suggestion counts</h5>
+      <h2><canvas id="Chart2" style="max-width: 500px;"></canvas></h2>
+    </div>
+    <div class="col"></div>
+    <div align="center" class="col-3 border border-primary rounded" style="padding-top: 10px;">
+      <h5>Tasks assigned to you</h5>
+      <h2>0</h2>
+    </div>
+    <div class="col"></div>
+    <div align="center" class="col-3 border border-primary rounded" style="padding-top: 10px;">
+      <h5>Suggestion strengths</h5>
+      <h2><canvas id="Chart3" style="max-width: 500px;"></canvas></h2>
+    </div>
+  </div>
 </div>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
+<script>
+    var myPieChart = new Chart("Chart3", {
+      type: 'pie',
+      data: {
+        labels: ["Weak", "Moderate", "Strong"],
+        datasets: [{
+          data: [{{weak_count}}, {{mod_count}}, {{strong_count}}],
+          backgroundColor: ["#F7464A", "#FDB45C", "#46BFBD"],
+          hoverBackgroundColor: ["#FF5A5E", "#FFC870", "#5AD3D1"]
+        }]
+      },
+      options: {
+        responsive: true,
+        legend: {
+        display: false
+    }
+      }
+    });
+
+    var xyValues = [
+  {x:1, y:3},
+  {x:2, y:8}
+];
+
+var xValues = ["W/ suggestion", "W/O suggestion"];
+var yValues = [{{tick_suggest_count}}, {{ticket_count - tick_suggest_count}}, 0];
+var barColors = [ "#5AD3D1", "#FFC870"];
+
+new Chart("Chart2", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    legend: {
+        display: false
+    },
+    scales: {
+        xAxes: [{
+            gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+                display: false
+            }
+        }],
+        yAxes: [{
+            gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+                drawBorder: false
+            },
+            ticks: {
+                display: false
+            }
+        }]
+    }
+  }
+});
+</script>
+
 {% endblock %}

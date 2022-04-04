@@ -35,7 +35,7 @@ def calculate_suggestions():
     from .models import Article, Suggestion, WriteBack
 
     # Read last 100 tickets from DB
-    tickets = pd.read_sql_query("select * from Ticket order by created_on desc limit 100;", con = db.session.connection())
+    tickets = pd.read_sql_query("select * from Ticket order by created_on desc limit 999;", con = db.session.connection())
     
     #Read all articles from DB
     articles = pd.read_sql_table(table_name = Article.__table__.name, con = db.session.connection(), index_col="id")
@@ -94,7 +94,7 @@ def calculate_suggestions():
                     #query = corpus[idx].strip()
                     article_id = articleIDs[idx]
 
-                    print(ticket_ref + " " + article_id + " " + str(query) + " " + str(round((1-distance),2)))
+                    # print(ticket_ref + " " + article_id + " " + str(query) + " " + str(round((1-distance),2)))
                     
                     # Checking suggestion doesnt already exist
                     query = Suggestion.query.filter(Suggestion.article_id==article_id, Suggestion.ticket_ref==ticket_ref).first()
