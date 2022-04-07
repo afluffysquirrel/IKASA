@@ -7,9 +7,6 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 from sentence_transformers import SentenceTransformer
 from datetime import datetime
-from . import db
-from .models import Article, Suggestion, WriteBack
-from website.models import WriteBack
 
 
 def console_log(message, log_type):
@@ -33,6 +30,9 @@ def calculate_suggestions():
 
     # Setting minimum similarity score to generate suggestion
     sensitivity = 0.3
+
+    from . import db
+    from .models import Article, Suggestion, WriteBack
 
     # Read last 100 tickets from DB
     tickets = pd.read_sql_query("select * from Ticket order by created_on desc limit 999;", con = db.session.connection())
@@ -179,6 +179,8 @@ def write_back_API(ticket_ref):
 
     from .models import Config
     from .models import Ticket
+    from . import db
+    from .models import WriteBack
 
     rest_api_ticketing_tool = Config.query.filter(Config.look_up == "rest_api_ticketing_tool").first()
     rest_api_user = Config.query.filter(Config.look_up == "rest_api_user").first()
@@ -221,7 +223,6 @@ def write_back_API(ticket_ref):
 
                         resp = requests.patch(url, headers=headers, data=data, auth=HTTPBasicAuth(rest_api_user.value, rest_api_pass.value))
                         if(resp.status_code == "200"):
-                            # Writeback to DB to prevent same ticket getting updated in future
                             write_back = WriteBack(ticket_ref)
                             db.session.add(write_back)
                             db.session.commit()
