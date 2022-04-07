@@ -43,10 +43,11 @@ def home():
     
     info_message = "Application status is good, please continue to add and update knowledge articles."
 
-    if(((ticket_count - tick_suggest_count) / tick_suggest_count) > 2):
-        info_message = "Your ratio of tickets with suggestions to those without is low! Try adding more knowledge articles to boost this."
-    elif(avg_match_strength < 0.45):
-        info_message = str(avg_match_strength) + " Your average match strength is low, try adding more detail into ticket and article titles, descriptions and tags."
+    if(tick_suggest_count > 0):
+        if(((ticket_count - tick_suggest_count) / tick_suggest_count) > 2):
+            info_message = "Your ratio of tickets with suggestions to those without is low! Try adding more knowledge articles to boost this."
+        elif(avg_match_strength < 0.45):
+            info_message = str(avg_match_strength) + " Your average match strength is low, try adding more detail into ticket and article titles, descriptions and tags."
 
     return render_template("home.html", user=current_user, article_count=article_count, ticket_count=ticket_count, suggestion_count=suggestion_count, weak_count=weak_count, mod_count=mod_count, strong_count=strong_count, tick_suggest_count=tick_suggest_count, info_message=info_message)
 
