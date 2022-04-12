@@ -77,9 +77,9 @@ def init_data():
         config = Config.query.first()
         if config == None:
             new_config_1 = Config("rest_api_user", "admin")
-            new_config_2 = Config("rest_api_pass", "vqcZZ7bU4sXQ")
+            new_config_2 = Config("rest_api_pass", "qWjs6c-2MY@H")
             new_config_3 = Config("rest_api_ticketing_tool", "ServiceNow")
-            new_config_4 = Config("rest_api_url", "https://dev97528.service-now.com")
+            new_config_4 = Config("rest_api_url", "https://dev111103.service-now.com")
             new_config_5 = Config("host_url", "")
             s.add(new_config_1)
             s.add(new_config_2)

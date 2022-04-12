@@ -179,8 +179,8 @@ def write_back_API(ticket_ref):
 
     from .models import Config
     from .models import Ticket
-    from . import db
     from .models import WriteBack
+    from . import db
 
     rest_api_ticketing_tool = Config.query.filter(Config.look_up == "rest_api_ticketing_tool").first()
     rest_api_user = Config.query.filter(Config.look_up == "rest_api_user").first()
@@ -222,11 +222,11 @@ def write_back_API(ticket_ref):
                         data = "{\"work_notes\": \"" + update_text + "\"}"
 
                         resp = requests.patch(url, headers=headers, data=data, auth=HTTPBasicAuth(rest_api_user.value, rest_api_pass.value))
-                        if(resp.status_code == "200"):
+                        
+                        if(resp.status_code == 200):
                             write_back = WriteBack(ticket_ref)
                             db.session.add(write_back)
                             db.session.commit()
-                 
                 else:
                     console_log("Response - " + str(response.status_code), 'error')
 
