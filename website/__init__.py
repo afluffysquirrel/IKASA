@@ -112,7 +112,6 @@ def init_data():
             s.add(new_user_2)
             s.commit()
 
-
         from .db_models import Article
         article = Article.query.first()
         if article == None:
