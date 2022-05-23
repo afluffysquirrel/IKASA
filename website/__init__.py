@@ -3,7 +3,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
-from werkzeug.security import generate_password_hash
 from .jobs import extract_tickets, calculate_suggestions
 import os 
 import time
@@ -41,7 +40,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User
+    from .db_models import User
 
     create_database(app)
  
@@ -73,13 +72,13 @@ def create_database(app):
 def init_data():
         s = db.session()
 
-        from .models import Config
+        from .db_models import Config
         config = Config.query.first()
         if config == None:
             new_config_1 = Config("rest_api_user", "admin")
-            new_config_2 = Config("rest_api_pass", "qWjs6c-2MY@H")
+            new_config_2 = Config("rest_api_pass", "!s/vm5Zut2PyCXOR")
             new_config_3 = Config("rest_api_ticketing_tool", "ServiceNow")
-            new_config_4 = Config("rest_api_url", "https://dev111103.service-now.com")
+            new_config_4 = Config("rest_api_url", "https://dev126629.service-now.com")
             new_config_5 = Config("host_url", "")
             s.add(new_config_1)
             s.add(new_config_2)
@@ -88,7 +87,7 @@ def init_data():
             s.add(new_config_5)
             s.commit()
 
-        from .models import User
+        from .db_models import User
         user = User.query.first()
         if user == None:
             new_user = User(
@@ -114,7 +113,7 @@ def init_data():
             s.commit()
 
 
-        from .models import Article
+        from .db_models import Article
         article = Article.query.first()
         if article == None:
             new_article = Article("How to install and open Adobe Photoshop",

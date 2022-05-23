@@ -4,7 +4,7 @@ from flask.helpers import url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 from bs4 import BeautifulSoup
-from .models import Article, Attachment, User, Ticket, Suggestion, Config
+from .db_models import Article, Attachment, User, Ticket, Suggestion, Config
 from . import db
 from werkzeug.utils import secure_filename
 from datetime import date

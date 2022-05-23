@@ -1,5 +1,4 @@
 from random import randint
-import uuid
 
 from . import create_database, db
 from flask_login import UserMixin
