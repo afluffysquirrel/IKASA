@@ -41,7 +41,7 @@ def generate_task_id():
     max_ = 999999
     rand = "TSK" + str(randint(min_, max_))
     
-    while SQLAlchemy().session().query(Ticket).filter(id == rand).limit(1).first() is not None:
+    while SQLAlchemy().session().query(Task).filter(id == rand).limit(1).first() is not None:
         rand = "TSK" + str(randint(min_, max_))
 
     return rand
