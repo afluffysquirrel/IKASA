@@ -94,7 +94,7 @@ def calculate_suggestions():
 
                     if query == None:
                         # Adding suggestion to DB
-                        new_suggestion = Suggestion(article_id, ticket_ref, round((1-distance),2))
+                        new_suggestion = Suggestion(article_id, ticket_ref, round((1-distance),2), 'ticket')
                         db.session.add(new_suggestion)
                         db.session.commit()
                         suggestionFlag = True

@@ -1,6 +1,6 @@
 from random import randint
 
-from . import create_database, db
+from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 from datetime import date
@@ -16,7 +16,7 @@ def generate_user_id():
 
     return rand
 
-def generate_ticket_ref():
+def generate_ticket_id():
     min_ = 100000
     max_ = 999999
     rand = "T" + str(randint(min_, max_))
@@ -36,16 +36,26 @@ def generate_article_id():
 
     return rand
 
+def generate_task_id():
+    min_ = 100000
+    max_ = 999999
+    rand = "TSK" + str(randint(min_, max_))
+    
+    while SQLAlchemy().session().query(Ticket).filter(id == rand).limit(1).first() is not None:
+        rand = "TSK" + str(randint(min_, max_))
+
+    return rand
+
 class User(db.Model, UserMixin):
-    #id = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer,  default=generate_user_id, unique=True, primary_key=True)
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     last_name = db.Column(db.String(150))
     admin_flag = db.Column(db.Boolean)
-    articles = db.relationship('Article')
     approved_flag = db.Column(db.Boolean)
+    articles = db.relationship('Article')
+    tasks = db.relationship('Task')
 
     def __init__(self, email, password, first_name, last_name):
         self.email = email
@@ -56,8 +66,7 @@ class User(db.Model, UserMixin):
         self.approved_flag = False
 
 class Ticket(db.Model):
-    #id = db.Column(db.Integer, primary_key=True)
-    id = db.Column(db.String,  default=generate_ticket_ref, unique=True, primary_key=True)
+    id = db.Column(db.String,  default=generate_ticket_id, unique=True, primary_key=True)
     reference = db.Column(db.String(32))
     created_on = db.Column(db.Date())
     created_by = db.Column(db.String(128))
@@ -72,7 +81,6 @@ class Ticket(db.Model):
         self.long_description = long_description
 
 class Article(db.Model):
-    #id = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.String,  default=generate_article_id, unique=True, primary_key=True)
     title = db.Column(db.String(128))
     body = db.Column(db.String(4096))
@@ -96,22 +104,37 @@ class Article(db.Model):
 class Suggestion(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
     article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
+    task_id = db.Column(db.String, db.ForeignKey('task.id'))
     ticket_ref = db.Column(db.String, db.ForeignKey('ticket.reference'))
     similarity = db.Column(db.Float)
 
-    def __init__(self, article_id, ticket_ref, similarity):
-        self.article_id = article_id
-        self.ticket_ref = ticket_ref
-        self.similarity = similarity
+    def __init__(self, article_id, ref_id, similarity, type = None):
+        if type is None:
+            raise Exception("Suggestion type not defined")
+        if type == 'ticket':
+            self.article_id = article_id
+            self.ticket_ref = ref_id
+            self.similarity = similarity
+        if type == 'task':
+            self.article_id = article_id
+            self.task_id = ref_id
+            self.similarity = similarity
 
 class Attachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
+    article_id = db.Column(db.String, db.ForeignKey('article.id'))
+    task_id = db.Column(db.String, db.ForeignKey('task.id'))
     file_name = db.Column(db.String(512))
 
-    def __init__(self, article_id, file_name):
-        self.article_id = article_id
-        self.file_name = file_name
+    def __init__(self, ref_id, file_name, type = None):
+        if type is None:
+            raise Exception("Attachment type not defined")
+        if type == 'article':
+            self.article_id = ref_id
+            self.file_name = file_name
+        if type == 'task':
+            self.task_id = ref_id
+            self.file_name = file_name
 
 class Config(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -130,3 +153,23 @@ class WriteBack(db.Model):
         self.ticket_ref = ticket_ref
 
 #TODO Create db model for tasks
+class Task(db.Model):
+    id = db.Column(db.String,  default=generate_task_id, unique=True, primary_key=True)
+    short_description = db.Column(db.String(128))
+    long_description = db.Column(db.String(4096))
+    creation_date = db.Column(db.Date())
+    last_updated_date = db.Column(db.Date())
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    priority = db.Column(db.Integer)
+    attachments = db.relationship('Attachment')
+    suggestions = db.relationship('Suggestion')
+
+    #TODO create task_category model
+    #category = db.Column(db.Integer, db.ForeignKey('task_category.id'))
+
+    def __init__(self, reference, created_by, short_description, long_description):
+        self.reference = reference
+        self.created_by = created_by
+        self.short_description = short_description
+        self.long_description = long_description
+

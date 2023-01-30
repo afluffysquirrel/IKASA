@@ -133,7 +133,7 @@ def add_article():
                 flash('Upload file "' + uploaded_file.filename + '" filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
             else: 
                 uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
-                new_attachment = Attachment(id, str(id)+"_"+filename)
+                new_attachment = Attachment(id, str(id)+"_"+filename, 'article')
                 db.session.add(new_attachment)
                 db.session.commit()
     
@@ -194,7 +194,7 @@ def edit_article(id):
                     flash('Upload file "' + uploaded_file.filename + '" filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
                 else: 
                     uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
-                    new_attachment = Attachment(id, str(id)+"_"+filename)
+                    new_attachment = Attachment(id, str(id)+"_"+filename, 'article')
                     db.session.add(new_attachment)
 
         db.session.commit()
@@ -213,6 +213,7 @@ def upload(arg):
         return send_from_directory(upload_path, arg)
     if request.method == 'POST':
         # added hidden _method parameter as html doesnt support DELETE from forms
+        #TODO delete function doesnt remove files on mac osx 
         if(request.form.get('_method') == 'DELETE'):
             attachments = Attachment.query.filter(Attachment.id == arg)
             if attachments.count() > 0:
