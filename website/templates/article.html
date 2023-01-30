@@ -23,11 +23,11 @@
                 <p></p></p>
                 <b>Created date</b>
                 <br/>
-                {{article.creation_date}}
+                {{article.creation_date.strftime('%d/%m/%Y')}}
                 <p></p></p>
                 <b>Last updated</b>
                 <br/>
-                {{article.last_updated_date}}
+                {{article.last_updated_date.strftime('%d/%m/%Y')}}
                 <hr/>
                 {% if attachments[0] is defined %}
                   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#attachmentsModal">

@@ -18,6 +18,8 @@ upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '
 
 items_per_page = 20
 
+#TODO split views.py into smaller sub blueprints
+
 with app.app_context():
         upload_path = os.path.dirname(app.instance_path) + '/uploads'
 
@@ -156,6 +158,7 @@ def delete_article(id):
         flash('Couldnt delete article, did not exist', category='error')
         return redirect(url_for('views.article', id=id))
 
+#TODO on article update re-calculate suggestions
 @views.route('/articles/edit/<id>', methods=['POST'])
 @login_required
 def edit_article(id):

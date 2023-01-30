@@ -128,3 +128,5 @@ class WriteBack(db.Model):
 
     def __init__(self, ticket_ref):
         self.ticket_ref = ticket_ref
+
+#TODO Create db model for tasks

@@ -40,7 +40,7 @@
       <td scope="row"><b>{{result.Article.id}}</b></td>
       <td>{{result.Article.title}}</td>
       <td>{{result.Suggestion.similarity}}</td>
-      <td>{{result.Article.creation_date}}</td>
+      <td>{{result.Article.creation_date.strftime('%d/%m/%Y')}}</td>
     </tr>
   {% endfor %}
   </tbody>

@@ -115,26 +115,47 @@ def init_data():
         from .db_models import Article
         article = Article.query.first()
         if article == None:
-            new_article = Article("How to install and open Adobe Photoshop",
-            "Test article",
-            "Adobe, Software, Install",
-            new_user.id)
-            
+            with open('init_articles/1.html', 'r') as f:
+                html_string = f.read()
+            new_article = Article("How to install and open Adobe Photoshop", html_string, "Adobe, Software, Install", new_user.id)
             s.add(new_article)
             s.commit()
 
-            new_article = Article("How to run Adobe acrobat on PC", "Test article", "Adobe, Acrobat, Software", new_user.id)
+            with open('init_articles/2.html', 'r') as f:
+                html_string = f.read()
+            new_article = Article("How to run Adobe acrobat on PC", html_string, "Adobe, Acrobat, Software", new_user.id)
             s.add(new_article)
             s.commit()
 
-            new_article = Article("Fix water damaged USB drive", "Test article", "USB, Fix, Water", new_user.id)
+            with open('init_articles/3.html', 'r') as f:
+                html_string = f.read()
+            new_article = Article("Fix water damaged USB drive", html_string, "USB, Fix, Water", new_user.id)
             s.add(new_article)
             s.commit()
 
-            new_article = Article("Email server overloaded solution", "Test article", "Email, SFTP, slowness, overloaded", new_user.id)
+            with open('init_articles/4.html', 'r') as f:
+                html_string = f.read()
+            new_article = Article("Email server overloaded solution", html_string, "Email, IMAP, POP3, slowness, overloaded", new_user.id)
             s.add(new_article)
             s.commit()
 
-            new_article = Article("Update user password in active directory", "Test article", "Passwords, User, Account, Active Directory", new_user.id)
+            with open('init_articles/5.html', 'r') as f:
+                html_string = f.read()
+            new_article = Article("Update user password in active directory", html_string, "Passwords, User, Account, Active Directory", new_user.id)
             s.add(new_article)
+            s.commit()
+        
+        from .db_models import Ticket
+        ticket = Ticket.query.first()
+        if ticket == None:
+            new_ticket = Ticket('EXAMPLE_1', 'Admin', 'IMAP server is not responding', 'When trying to access Outlook we are getting a timeout and no response.')
+            s.add(new_ticket)
+            s.commit()
+
+            new_ticket = Ticket('EXAMPLE_2', 'Admin', 'Cannot edit PDF\'s on work laptop', 'I want to edit a PDF however i do not have any application on my PC which can do so.')
+            s.add(new_ticket)
+            s.commit()
+
+            new_ticket = Ticket('EXAMPLE_3', 'Admin', 'Spilt coffee on flash drive', 'Now when I plug it in the computer does not recognise it!')
+            s.add(new_ticket)
             s.commit()
