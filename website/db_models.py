@@ -159,17 +159,17 @@ class Task(db.Model):
     long_description = db.Column(db.String(4096))
     creation_date = db.Column(db.Date())
     last_updated_date = db.Column(db.Date())
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     priority = db.Column(db.Integer)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #category = db.Column(db.Integer, db.ForeignKey('task_category.id'))
     attachments = db.relationship('Attachment')
     suggestions = db.relationship('Suggestion')
-
-    #TODO create task_category model
-    #category = db.Column(db.Integer, db.ForeignKey('task_category.id'))
-
-    def __init__(self, reference, created_by, short_description, long_description):
-        self.reference = reference
-        self.created_by = created_by
+    
+    def __init__(self, short_description, long_description, created_by):
         self.short_description = short_description
         self.long_description = long_description
+        self.created_by = created_by
+        self.creation_date = date.today()
+        self.last_updated_date = date.today()
 
+#TODO create task_category model
