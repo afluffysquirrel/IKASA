@@ -7,7 +7,6 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
 
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -22,7 +21,7 @@ def login():
                     login_user(user, remember=True)
                     if request.args.get('next') != None and request.args.get('next') != "":
                         return redirect(request.args.get('next'), code=302)
-                    return redirect(url_for('views.home'))
+                    return redirect(url_for('home.home'))
                 else:
                     flash('Account not yet approved', category='error')
             else:
@@ -39,7 +38,7 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
-
+# TODO dont delete entered data on failed validation
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':

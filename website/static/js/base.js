@@ -3,7 +3,7 @@ $(function() {
     navbar_height = document.querySelector('.navbar').offsetHeight;
     document.body.style.paddingTop = navbar_height + 'px';
 
-    if(location.pathname.split("/")[1] == "articles" || location.pathname.split("/")[1] == "tickets"){
+    if(location.pathname.split("/")[1] == "articles" || location.pathname.split("/")[1] == "tickets" || location.pathname.split("/")[1] == "tasks"){
         document.getElementById('search').style.visibility='visible';
     } else 
     {

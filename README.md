@@ -1,4 +1,4 @@
-IKASA is a web application designed to improve incident resolution efficiency.
+IKASA is a web application designed to improve incident/task resolution efficiency.
 Web API's are used to integrate service management tools enabling intelligent suggestions for knowledge articles based on the content of a service request.
 Suggestions are calculated using the 'all-MiniLM-L12-v2' pre-trained model to calculate a similarity figure.
 

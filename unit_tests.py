@@ -68,6 +68,7 @@ class FlaskTest(unittest.TestCase):
             data = dict(email='fake@fake.com', password='wrong'),
             follow_redirects=False
         )
+        # TODO Reuturn 401 un authorised
         self.assertEqual(response.status_code, 200)
         self.assertTrue(b'Login' in response.data)
         self.assertFalse(b'Home' in response.data)

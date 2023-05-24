@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+from website.utils.init_data import init_data
 from .jobs import extract_tickets, calculate_suggestions
 import os 
 import time
@@ -34,11 +35,25 @@ def create_app():
     scheduler.start()
 
     with app.app_context():
-        from .views import views
         from .auth import auth
+        from .logic.root import rootBluePrint
+        from .logic.home import homeBluePrint
+        from .logic.articles import articlesBluePrint
+        from .logic.tickets import ticketsBluePrint
+        from .logic.admin import adminBluePrint
+        from .logic.account import accountBluePrint
+        from .logic.tasks import tasksBluePrint
+        from .logic.uploads import uploadsBluePrint
 
-    app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(rootBluePrint, url_prefix='/')
+    app.register_blueprint(homeBluePrint, url_prefix='/home')
+    app.register_blueprint(articlesBluePrint, url_prefix='/articles')
+    app.register_blueprint(ticketsBluePrint, url_prefix='/tickets')
+    app.register_blueprint(adminBluePrint, url_prefix='/admin')
+    app.register_blueprint(accountBluePrint, url_prefix='/user')
+    app.register_blueprint(tasksBluePrint, url_prefix='/tasks')
+    app.register_blueprint(uploadsBluePrint, url_prefix='/uploads')
 
     from .db_models import User
 
@@ -68,94 +83,3 @@ def create_database(app):
     if not path.exists('website/' + DB_NAME):
         db.create_all(app=app)
         print('Created Database!')
-
-def init_data():
-        s = db.session()
-
-        from .db_models import Config
-        config = Config.query.first()
-        if config == None:
-            new_config_1 = Config("rest_api_user", "admin")
-            new_config_2 = Config("rest_api_pass", "!s/vm5Zut2PyCXOR")
-            new_config_3 = Config("rest_api_ticketing_tool", "ServiceNow")
-            new_config_4 = Config("rest_api_url", "https://dev126629.service-now.com")
-            new_config_5 = Config("host_url", "")
-            s.add(new_config_1)
-            s.add(new_config_2)
-            s.add(new_config_3)
-            s.add(new_config_4)
-            s.add(new_config_5)
-            s.commit()
-
-        from .db_models import User
-        user = User.query.first()
-        if user == None:
-            new_user = User(
-                email="chris@aldred.cloud",
-                password="sha256$HYEi1dfUYtJiK5ZU$0bde8f5e9a6ebb98a0a3a3d057ff84a737e2ffe877b4cd753903f7e40bf1dcbc",
-                first_name="Chris",
-                last_name="Aldred"
-            )
-            new_user.admin_flag = True
-            new_user.approved_flag = True
-            s.add(new_user)
-            s.commit()
-
-            new_user_2 = User(
-                email="admin@email.com",
-                password="sha256$fQBYKzsb8r2XZl0h$9f73104475986e7f385c80238ee77f0eb6a950bcfe0111bff405a086aa922d26",
-                first_name="test",
-                last_name="account"
-            )
-            new_user_2.admin_flag = True
-            new_user_2.approved_flag = True
-            s.add(new_user_2)
-            s.commit()
-
-        from .db_models import Article
-        article = Article.query.first()
-        if article == None:
-            with open('init_articles/1.html', 'r') as f:
-                html_string = f.read()
-            new_article = Article("How to install and open Adobe Photoshop", html_string, "Adobe, Software, Install", new_user.id)
-            s.add(new_article)
-            s.commit()
-
-            with open('init_articles/2.html', 'r') as f:
-                html_string = f.read()
-            new_article = Article("How to run Adobe acrobat on PC", html_string, "Adobe, Acrobat, Software", new_user.id)
-            s.add(new_article)
-            s.commit()
-
-            with open('init_articles/3.html', 'r') as f:
-                html_string = f.read()
-            new_article = Article("Fix water damaged USB drive", html_string, "USB, Fix, Water", new_user.id)
-            s.add(new_article)
-            s.commit()
-
-            with open('init_articles/4.html', 'r') as f:
-                html_string = f.read()
-            new_article = Article("Email server overloaded solution", html_string, "Email, IMAP, POP3, slowness, overloaded", new_user.id)
-            s.add(new_article)
-            s.commit()
-
-            with open('init_articles/5.html', 'r') as f:
-                html_string = f.read()
-            new_article = Article("Update user password in active directory", html_string, "Passwords, User, Account, Active Directory", new_user.id)
-            s.add(new_article)
-            s.commit()
-        
-        from .db_models import Ticket
-        ticket = Ticket.query.first()
-        if ticket == None:
-            new_ticket = Ticket('EXAMPLE_1', 'Admin', 'IMAP server is not responding', 'When trying to access Outlook we are getting a timeout and no response.')
-            s.add(new_ticket)
-            s.commit()
-
-            new_ticket = Ticket('EXAMPLE_2', 'Admin', 'Cannot edit PDF\'s on work laptop', 'I want to edit a PDF however i do not have any application on my PC which can do so.')
-            s.add(new_ticket)
-            s.commit()
-
-            new_ticket = Ticket('EXAMPLE_3', 'Admin', 'Spilt coffee on flash drive', 'Now when I plug it in the computer does not recognise it!')
-            s.add(new_ticket)
-            s.commit()

@@ -6,6 +6,8 @@ from sqlalchemy.sql import func
 from datetime import date
 from flask_sqlalchemy import SQLAlchemy
 
+#TODO Add nullable flag to key fields, nullable=False
+
 def generate_user_id():
     min_ = 100000
     max_ = 999999
@@ -54,8 +56,8 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(150))
     admin_flag = db.Column(db.Boolean)
     approved_flag = db.Column(db.Boolean)
-    articles = db.relationship('Article')
-    tasks = db.relationship('Task')
+    #articles = db.relationship('Article')
+    #tasks = db.relationship('Task')
 
     def __init__(self, email, password, first_name, last_name):
         self.email = email
@@ -72,7 +74,7 @@ class Ticket(db.Model):
     created_by = db.Column(db.String(128))
     short_description = db.Column(db.String(256))
     long_description = db.Column(db.String(4096))
-    suggestions = db.relationship('Suggestion')
+    #suggestions = db.relationship('Suggestion')
 
     def __init__(self, reference, created_by, short_description, long_description):
         self.reference = reference
@@ -89,8 +91,8 @@ class Article(db.Model):
     creation_date = db.Column(db.Date())
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     last_updated_date = db.Column(db.Date())
-    attachments = db.relationship('Attachment')
-    suggestions = db.relationship('Suggestion')
+    #attachments = db.relationship('Attachment')
+    #suggestions = db.relationship('Suggestion')
     #last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, body, tags, created_by):
@@ -152,18 +154,23 @@ class WriteBack(db.Model):
     def __init__(self, ticket_ref):
         self.ticket_ref = ticket_ref
 
-#TODO Create db model for tasks
 class Task(db.Model):
     id = db.Column(db.String,  default=generate_task_id, unique=True, primary_key=True)
-    short_description = db.Column(db.String(128))
+    short_description = db.Column(db.String(128), nullable=False)
     long_description = db.Column(db.String(4096))
-    creation_date = db.Column(db.Date())
+    creation_date = db.Column(db.Date(), nullable=False)
     last_updated_date = db.Column(db.Date())
     priority = db.Column(db.Integer)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
-    #category = db.Column(db.Integer, db.ForeignKey('task_category.id'))
-    attachments = db.relationship('Attachment')
-    suggestions = db.relationship('Suggestion')
+
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    assigned_to_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
+    assigned_to = db.relationship("User", foreign_keys=[assigned_to_id])
+
+    #TODO category = db.Column(db.Integer, db.ForeignKey('task_category.id'))
+    #attachments = db.relationship('Attachment')
+    #suggestions = db.relationship('Suggestion')
     
     def __init__(self, short_description, long_description, created_by):
         self.short_description = short_description
