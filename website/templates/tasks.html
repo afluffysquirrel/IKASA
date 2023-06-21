@@ -2,6 +2,12 @@
 {% block title %}Tasks{% endblock %}
 {% block content %}
     <h1 align="center">Tasks</h1>
+    <div align="right">
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
     <table class="table table-striped table-hover">
         <thead>
           <tr>
@@ -40,4 +46,67 @@
         </nav>
         </center>
         <p>&nbsp;</p>
+
+    <!-- Add task modal -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addTaskModalLabel">Add Task</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post" action="/tasks/add" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="email">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  placeholder="Enter title"
+                />
+              </div>
+              <br/>
+              <div class="form-group">
+                <label for="email">Description</label>
+                <textarea
+                  class="form-control"
+                  id="editor"
+                  name="editor"
+                  rows="3"></textarea>
+              </div>
+              <br/>
+              <div class="form-group">
+                <label for="email">Tags</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="tags"
+                  name="tags"
+                  placeholder="Example, tags, seperated, by, comma's"
+                />
+              </div>
+              <br/>
+              <div class="form-group">
+                <label for="email">Attachments</label>
+                <input
+                  type="file"
+                  class="form-control"
+                  id="files"
+                  name="files"
+                  multiple
+                  >
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button id="submit-btn" type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

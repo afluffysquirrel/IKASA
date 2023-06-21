@@ -23,6 +23,7 @@ def calculate_suggestions():
     closest_n = 5
 
     # Setting minimum similarity score to generate suggestion
+    # TODO make this toggleable from front end (admin)
     sensitivity = 0.3
 
     from . import db
@@ -104,7 +105,9 @@ def calculate_suggestions():
         if(suggestionFlag == True):
             query = WriteBack.query.filter(WriteBack.ticket_ref==ticket_ref).first()
             if query == None:
-                write_back_API(ticket_ref)
+                # write_back_API(ticket_ref)
+                # TODO enable write back again 
+                None
 
     console_log('Suggestions calculated', '')
 

@@ -60,6 +60,7 @@ def article(id):
         flash('Article does not exist', category='error')
         return redirect(url_for('articles.articles'))
     else:
+        # TODO fix DB model to remove requirement for two lines below with proper relationships
         creator = User.query.filter(User.id == article.created_by)
         attachments = Attachment.query.filter(Attachment.article_id == id)
         return render_template("article.html", user=current_user, article=article, creator=creator[0], attachments=attachments)

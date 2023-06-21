@@ -172,11 +172,20 @@ class Task(db.Model):
     #attachments = db.relationship('Attachment')
     #suggestions = db.relationship('Suggestion')
     
-    def __init__(self, short_description, long_description, created_by):
-        self.short_description = short_description
-        self.long_description = long_description
-        self.created_by = created_by
-        self.creation_date = date.today()
-        self.last_updated_date = date.today()
+    def __init__(self, short_description, long_description, created_by, assigned_to = None):
+        if assigned_to is None:
+            self.short_description = short_description
+            self.long_description = long_description
+            self.created_by = created_by
+            self.creation_date = date.today()
+            self.last_updated_date = date.today()
+        else:
+            self.short_description = short_description
+            self.long_description = long_description
+            self.created_by = created_by
+            self.creation_date = date.today()
+            self.last_updated_date = date.today()
+            self.assigned_to = assigned_to
+
 
 #TODO create task_category model

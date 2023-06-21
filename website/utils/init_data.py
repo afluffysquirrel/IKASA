@@ -94,6 +94,6 @@ def init_data():
         task = Task.query.first()
         if task == None:
             user = User.query.first()
-            new_task = Task('Finish developing IKASA', 'Test description', user)
+            new_task = Task('Finish developing IKASA', 'Task description goes here', user, user)
             s.add(new_task)
             s.commit()
