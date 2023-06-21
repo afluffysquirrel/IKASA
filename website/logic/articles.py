@@ -12,7 +12,7 @@ from datetime import date
 
 articlesBluePrint = Blueprint('articles', __name__)
 items_per_page = 20
-upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt', '.zip']
+upload_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt', '.zip']
 
 with app.app_context():
         upload_path = os.path.dirname(app.instance_path) + '/uploads'

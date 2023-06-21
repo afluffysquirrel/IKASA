@@ -11,7 +11,7 @@ import os
 
 tasksBluePrint = Blueprint('tasks', __name__)
 items_per_page = 20
-upload_extensions = ['.jpg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt', '.zip']
+upload_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.doc', '.docx', '.xlsx', '.xlsm', '.ppt', '.pptx', '.txt', '.zip']
 
 with app.app_context():
         upload_path = os.path.dirname(app.instance_path) + '/uploads'
@@ -120,7 +120,7 @@ def add_task():
                 flash('Upload file "' + uploaded_file.filename + '" filetype not accepted, must be: .jpg, .png, .gif, .pdf, .doc, .docx, .xlsx, .xlsm, .ppt, .pptx, .txt', category='error')
             else: 
                 uploaded_file.save(os.path.join(upload_path, str(id)+"_"+filename))
-                new_attachment = Attachment(id, str(id)+"_"+filename, 'article')
+                new_attachment = Attachment(id, str(id)+"_"+filename, 'task')
                 db.session.add(new_attachment)
                 db.session.commit()
     
