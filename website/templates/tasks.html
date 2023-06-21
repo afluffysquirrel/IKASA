@@ -83,17 +83,37 @@
                   name="editor"
                   rows="3"></textarea>
               </div>
+
+              <script type="module">
+                import Autocomplete from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-autocomplete@master/autocomplete.js";
+                const opts = {
+                  onSelectItem: console.log,
+                };
+                var src = [];
+                for (let i = 0; i < 50; i++) {
+                  src.push({
+                    title: "Option " + i,
+                    id: "opt" + i,
+                    data: {
+                      key: i,
+                    },
+                  });
+                }
+                Autocomplete.init("input.autocomplete", {
+                  items: src,
+                  valueField: "id",
+                  labelField: "title",
+                  highlightTyped: true,
+                  onSelectItem: console.log,
+                });
+                new Autocomplete(document.getElementById("assigned"), opts);
+              </script>
               <br/>
               <div class="form-group">
                 <label for="email">Assigned to</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="assigned"
-                  name="assigned"
-                  placeholder="Begin typing to search"
-                />
+                <input type="text" class="form-control" id="assigned" name="assigned" data-server="/user/search" data-live-server="true" data-label-field="email" placeholder="Search user" />
               </div>
+
               <br/>
               <div class="form-group">
                 <label for="email">Due date</label>

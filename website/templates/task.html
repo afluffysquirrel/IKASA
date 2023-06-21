@@ -46,13 +46,7 @@
                     class="btn btn-secondary {% if user.id != task.created_by and user.admin_flag == False %}disabled{% endif %}"
                     data-bs-toggle="modal" data-bs-target="#editTaskModal">
                       Edit
-                    </button> 
-                    <form action="/user/search" method="post">
-                      <label for="fname">search</label>
-                      <input type="text" id="text" name="text"><br><br>
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button type="submit" formmethod="post">Submit</button>
-                    </form>
+                    </button>
                     <div>&nbsp;&nbsp;</div>
                     <!-- Button trigger modal -->
                     <button type="button"

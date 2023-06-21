@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_login import login_required, current_user
-from ..db_models import Task, Suggestion, Article, Attachment
+from ..db_models import Task, Suggestion, Article, Attachment, User
 from sqlalchemy import and_, or_, not_, func
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .. import db
@@ -93,7 +93,7 @@ def add_task():
     body = request.form.get('editor')
 
     # TODO assigned to functionality and due date
-    assigned_to = request.form.get('assigned')
+    assigned_email = request.form.get('assigned')
     due_date = request.form.get('due')
 
     if title == "" or title == None:
@@ -106,10 +106,14 @@ def add_task():
         script_elt.extract()
     body = str(soup)
 
+    # Get user object from DB
+    print(assigned_email)
+    user = User.query.filter_by(email=assigned_email).first()
+
     if(due_date == ''):
-        new_task = Task(title, body, current_user)
+        new_task = Task(title, body, current_user, user)
     else:
-        new_task = Task(title, body, current_user, None, datetime.strptime(due_date, '%Y-%m-%d'))
+        new_task = Task(title, body, current_user, user, datetime.strptime(due_date, '%Y-%m-%d'))
 
     db.session.add(new_task)
     db.session.commit()

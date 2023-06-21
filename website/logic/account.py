@@ -44,14 +44,14 @@ def user():
             
         return redirect(url_for('account.user'))
 
-@accountBluePrint.route('/search', methods=['POST'])
+@accountBluePrint.route('/search', methods=['GET'])
 @login_required
 def search():
-    text = request.form.get('text')
-    results = User.query.filter(User.email.contains(text)).all()
+    query = request.args.get('query')
+    results = User.query.filter(User.email.contains(query)).limit(10).all()
 
     list = []
     for result in results:
-        list.append(result.email)
+        list.append({'id':result.id, 'email':result.email})
 
     return json.dumps(list)
