@@ -10,11 +10,21 @@ $(function() {
         document.getElementById('search').style.visibility='hidden';
     }
     setInterval(function() {
-        if(document.getElementById('title').value.length == 0 || document.getElementById('tags').value.length == 0){
-            document.getElementById('submit-btn').disabled = true;
+        if(location.pathname.split("/")[1] == "articles"){
+            if(document.getElementById('title').value.length == 0 || document.getElementById('tags').value.length == 0){
+                document.getElementById('submit-btn').disabled = true;
+            }
+            else {
+                document.getElementById('submit-btn').disabled = false;
+            }
         }
-        else {
-            document.getElementById('submit-btn').disabled = false;
+        if(location.pathname.split("/")[1] == "tasks"){
+            if(document.getElementById('title').value.length == 0){
+                document.getElementById('submit-btn').disabled = true;
+            }
+            else {
+                document.getElementById('submit-btn').disabled = false;
+            }
         }
     }, 1000); // Wait 1000ms before running again
 });

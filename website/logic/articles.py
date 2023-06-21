@@ -65,6 +65,7 @@ def article(id):
         attachments = Attachment.query.filter(Attachment.article_id == id)
         return render_template("article.html", user=current_user, article=article, creator=creator[0], attachments=attachments)
 
+# TODO test malicious code input in title and other fields
 @articlesBluePrint.route('/add', methods=['POST'])
 @login_required
 def add_article():

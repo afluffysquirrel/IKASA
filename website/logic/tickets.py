@@ -52,7 +52,7 @@ def ticket(id):
         return redirect(url_for('tickets.tickets'))
     else:
         query = db.session.query(Article, Ticket, Suggestion) \
-        .filter(Suggestion.article_id == Article.id, Suggestion.ticket_ref == Ticket.reference) \
+        .filter(Suggestion.article_id == Article.id, Suggestion.ticket_ref == Ticket.reference, Suggestion.ticket_ref == ticket.reference) \
         .order_by(Suggestion.similarity.desc()).all()
 
         return render_template("ticket.html", user=current_user, ticket=ticket, query=query)

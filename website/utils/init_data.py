@@ -1,3 +1,5 @@
+import _datetime
+
 def init_data():
         from .. import db
         s = db.session()
@@ -94,6 +96,6 @@ def init_data():
         task = Task.query.first()
         if task == None:
             user = User.query.first()
-            new_task = Task('Finish developing IKASA', 'Task description goes here', user, user)
+            new_task = Task('Finish developing IKASA', 'Task description goes here', user, user, _datetime.date.today())
             s.add(new_task)
             s.commit()

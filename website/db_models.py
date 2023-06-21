@@ -160,6 +160,7 @@ class Task(db.Model):
     long_description = db.Column(db.String(4096))
     creation_date = db.Column(db.Date(), nullable=False)
     last_updated_date = db.Column(db.Date())
+    due_date = db.Column(db.Date())
     priority = db.Column(db.Integer)
 
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -172,20 +173,16 @@ class Task(db.Model):
     #attachments = db.relationship('Attachment')
     #suggestions = db.relationship('Suggestion')
     
-    def __init__(self, short_description, long_description, created_by, assigned_to = None):
-        if assigned_to is None:
-            self.short_description = short_description
-            self.long_description = long_description
-            self.created_by = created_by
-            self.creation_date = date.today()
-            self.last_updated_date = date.today()
-        else:
-            self.short_description = short_description
-            self.long_description = long_description
-            self.created_by = created_by
-            self.creation_date = date.today()
-            self.last_updated_date = date.today()
+    def __init__(self, short_description, long_description, created_by, assigned_to = None, due_date = None):
+        self.short_description = short_description
+        self.long_description = long_description
+        self.created_by = created_by
+        self.creation_date = date.today()
+        self.last_updated_date = date.today()
+        if assigned_to is not None:
             self.assigned_to = assigned_to
+        if due_date is not None:
+            self.due_date = due_date
 
 
 #TODO create task_category model

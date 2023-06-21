@@ -14,6 +14,7 @@
             <th class="col-1" scope="col">ID</th>
             <th scope="col">Short description</th>
             <th class="col-2" scope="col">Created by</th>
+            <th class="col-1" scope="col">Due date</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +23,12 @@
             <td scope="row"><b>{{task.id}}</b></td>
             <td>{{task.short_description}}</td>
             <td>{{task.created_by.first_name + ' ' + task.created_by.last_name}}</td>
+            <td>
+              {% if task.due_date is not none %}   
+                {{task.due_date.strftime('%d/%m/%Y')}}
+              {% endif %}
+            </td>
+            
           </tr>
         {% endfor %}
         </tbody>
@@ -78,13 +85,24 @@
               </div>
               <br/>
               <div class="form-group">
-                <label for="email">Tags</label>
+                <label for="email">Assigned to</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="tags"
-                  name="tags"
-                  placeholder="Example, tags, seperated, by, comma's"
+                  id="assigned"
+                  name="assigned"
+                  placeholder="Begin typing to search"
+                />
+              </div>
+              <br/>
+              <div class="form-group">
+                <label for="email">Due date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="due"
+                  name="due"
+                  style="height: 40px;"
                 />
               </div>
               <br/>
