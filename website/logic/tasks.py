@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_login import login_required, current_user
 from ..db_models import Task, Suggestion, Article, Attachment
 from sqlalchemy import and_, or_, not_, func
@@ -105,7 +106,11 @@ def add_task():
         script_elt.extract()
     body = str(soup)
 
-    new_task = Task(title, body, current_user)
+    if(due_date == ''):
+        new_task = Task(title, body, current_user)
+    else:
+        new_task = Task(title, body, current_user, None, datetime.strptime(due_date, '%Y-%m-%d'))
+
     db.session.add(new_task)
     db.session.commit()
     id = new_task.id
