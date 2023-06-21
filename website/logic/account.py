@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+import json
 from flask_login import login_required, current_user
 from ..db_models import User
 from .. import db
@@ -42,3 +43,15 @@ def user():
             flash('Account details updated!', category='success')
             
         return redirect(url_for('account.user'))
+
+@accountBluePrint.route('/search', methods=['POST'])
+@login_required
+def search():
+    text = request.form.get('text')
+    results = User.query.filter(User.email.contains(text)).all()
+
+    list = []
+    for result in results:
+        list.append(result.email)
+
+    return json.dumps(list)
