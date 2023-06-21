@@ -62,7 +62,28 @@ def task(id):
         .filter(Suggestion.article_id == Article.id, Suggestion.task_id == Task.id, Suggestion.task_id == task.id) \
         .order_by(Suggestion.similarity.desc()).all()
 
-        return render_template("task.html", user=current_user, task=task, query=iter([]))
+        attachments = Attachment.query.filter(Attachment.task_id == id)
+
+        return render_template("task.html", user=current_user, task=task, query=iter([]), attachments=attachments)
+    
+@tasksBluePrint.route('/delete/<id>', methods=['POST'])
+@login_required
+def delete_task(id):
+    tasks = Task.query.filter(Task.id == id)
+    if tasks.count() > 0:
+        if tasks[0].created_by == current_user.id or current_user.admin_flag == True:
+            db.session.query(Task).filter(Task.id==id).delete()
+            db.session.query(Suggestion).filter(Suggestion.task_id==id).delete()
+            db.session.commit()
+            flash('Task deleted', category='success')
+            return redirect(url_for('tasks.tasks'))
+        else:
+            flash('You cannot edit or delete other users tasks', category='error')
+            return redirect(url_for('tasks.tasks', id=id))
+    else:
+        flash('Couldnt delete task, did not exist', category='error')
+        return redirect(url_for('tasks.tasks', id=id))
+
     
 @tasksBluePrint.route('/add', methods=['POST'])
 @login_required

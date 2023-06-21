@@ -35,8 +35,26 @@
                 {% else %}
                   Empty
                 {% endif %}
-                
-                
+                <hr/>
+                {% if attachments[0] is defined %}
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#attachmentsModal">
+                    View attachments
+                  </button>
+                {% endif %}
+                <div class="btn-toolbar pull-right" style="margin-bottom: 15px;">
+                    <button type="button"
+                    class="btn btn-secondary {% if user.id != task.created_by and user.admin_flag == False %}disabled{% endif %}"
+                    data-bs-toggle="modal" data-bs-target="#editTaskModal">
+                      Edit
+                    </button> 
+                    <div>&nbsp;&nbsp;</div>
+                    <!-- Button trigger modal -->
+                    <button type="button"
+                    class="btn btn-secondary {% if user.id != task.created_by and user.admin_flag == False %}disabled{% endif %}"
+                    data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -65,6 +83,26 @@
   {% endfor %}
   </tbody>
 </table>
+
+  <!-- Delete modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form method="post" action="/tasks/delete/{{task.id}}">
+            <input type="submit" value="Confirm" class="btn btn-primary">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
             
 {% endblock %}
     
