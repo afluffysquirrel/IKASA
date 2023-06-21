@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from ..db_models import Article, Ticket, Suggestion
+from ..db_models import Article, Ticket, Suggestion, Task
 from .. import db
 from sqlalchemy import and_, or_, not_, func
 
@@ -16,8 +16,9 @@ def home():
     weak_count = Suggestion.query.filter(and_(Suggestion.similarity >= 0.3, Suggestion.similarity < 0.45)).count()
     mod_count = Suggestion.query.filter(and_(Suggestion.similarity >= 0.45, Suggestion.similarity < 0.6)).count()
     strong_count = Suggestion.query.filter(and_(Suggestion.similarity >= 0.6, Suggestion.similarity < 1.0)).count()
-    tick_suggest_count = db.session.query(Suggestion.ticket_ref).distinct().count()
+    tick_suggest_count = db.session.query(Suggestion.ticket_ref).filter(Suggestion.ticket_ref!=None).distinct().count()
     avg_match_strength = Suggestion.query.with_entities(func.avg(Suggestion.similarity)).scalar()
+    tasks_assigned = Task.query.filter(Task.assigned_to == current_user).count()
     
     info_message = "Application status is good, please continue to add and update knowledge articles."
 
@@ -27,4 +28,4 @@ def home():
         elif(avg_match_strength < 0.45):
             info_message = str(avg_match_strength) + " Your average match strength is low, try adding more detail into ticket and article titles, descriptions and tags."
 
-    return render_template("home.html", user=current_user, article_count=article_count, ticket_count=ticket_count, suggestion_count=suggestion_count, weak_count=weak_count, mod_count=mod_count, strong_count=strong_count, tick_suggest_count=tick_suggest_count, info_message=info_message)
+    return render_template("home.html", user=current_user, article_count=article_count, ticket_count=ticket_count, suggestion_count=suggestion_count, weak_count=weak_count, mod_count=mod_count, strong_count=strong_count, tick_suggest_count=tick_suggest_count, info_message=info_message, tasks_assigned=tasks_assigned)

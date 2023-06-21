@@ -3,6 +3,7 @@ import scipy.spatial
 from .ticket_tool_models import ServiceNow
 from sentence_transformers import SentenceTransformer
 from datetime import datetime
+from sqlalchemy import and_, or_, not_, func
 
 def console_log(message, log_type):
     now = datetime.now()
@@ -31,6 +32,9 @@ def calculate_suggestions():
 
     # Read last 999 tickets from DB
     tickets = pd.read_sql_query("select * from Ticket order by created_on desc limit 999;", con = db.session.connection())
+
+    # Read last 999 tasks from DB
+    tasks = pd.read_sql_query("select * from Task order by creation_date desc limit 999;", con = db.session.connection())
     
     #Read all articles from DB
     articles = pd.read_sql_table(table_name = Article.__table__.name, con = db.session.connection(), index_col="id")
@@ -38,12 +42,14 @@ def calculate_suggestions():
     # Pre-format data for the model
     articles["tags"] = articles["tags"].str.replace(",","")
     articles = articles.applymap(lambda s:s.lower() if type(s) == str else s)
-    tickets = tickets.applymap(lambda s:s.lower() if type(s) == str else s)
-    
-    # Collect data used by model into 'soup'
-    tickets['soup'] = tickets['short_description'] + " " + tickets['long_description']
     articles['soup'] = articles['title'] + " " + articles['tags']
 
+    tickets = tickets.applymap(lambda s:s.lower() if type(s) == str else s)
+    tickets['soup'] = tickets['short_description'] + " " + tickets['long_description']
+
+    tasks = tasks.applymap(lambda s:s.lower() if type(s) == str else s)
+    tasks['soup'] = tasks['short_description'] + " " + tasks['long_description']
+    
     corpus = []
     articleIDs = []
 
@@ -59,7 +65,7 @@ def calculate_suggestions():
         articleIDs.append(str(index))
 
     corpus_embeddings = embedder.encode(corpus)
-
+    
     for index, row in tickets.iterrows():
 
         # Used for SR API write back, if any suggestions are generated this becomes true
@@ -87,11 +93,10 @@ def calculate_suggestions():
                     ticket_ref = row['reference'].upper()
                     #query = corpus[idx].strip()
                     article_id = articleIDs[idx]
-
-                    # print(ticket_ref + " " + article_id + " " + str(query) + " " + str(round((1-distance),2)))
                     
                     # Checking suggestion doesnt already exist
-                    query = Suggestion.query.filter(Suggestion.article_id==article_id, Suggestion.ticket_ref==ticket_ref).first()
+                    
+                    query = Suggestion.query.filter(and_(Suggestion.article_id==article_id, Suggestion.ticket_ref==ticket_ref, Suggestion.task_id==None)).first()
 
                     if query == None:
                         # Adding suggestion to DB
@@ -104,6 +109,53 @@ def calculate_suggestions():
         # In event no writeback has been previously done use rest API to add comment 
         if(suggestionFlag == True):
             query = WriteBack.query.filter(WriteBack.ticket_ref==ticket_ref).first()
+            if query == None:
+                # write_back_API(ticket_ref)
+                # TODO enable write back again 
+                None
+    
+    
+    for index, row in tasks.iterrows():
+
+        # Used for SR API write back, if any suggestions are generated this becomes true
+        suggestionFlag = False
+        task_id = ""
+
+        # Remove duplicates from ticket - Removed as retaining sentence structure generates more accurate suggestions
+        # row['soup'] = ' '.join(OrderedDict((w,w) for w in row['soup'].split()).keys())
+
+        # Remove special chars from ticket
+        row['soup'] = row['soup'].replace('\W', '')
+
+        queries = [row['soup']]
+        query_embeddings = embedder.encode(queries)
+        
+        # Calculating cosine similarity (Match Strength)
+        for query, query_embedding in zip(queries, query_embeddings):
+            distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
+
+            results = zip(range(len(distances)), distances)
+            results = sorted(results, key=lambda x: x[1])
+
+            for idx, distance in results[0:closest_n]:
+                if((1-distance) >= sensitivity):
+                    task_id = row['id'].upper()
+                    article_id = articleIDs[idx]
+                    
+                    # Checking suggestion doesnt already exist
+                    query = Suggestion.query.filter(and_(Suggestion.article_id==article_id, Suggestion.task_id==task_id, Suggestion.ticket_ref==None)).first()
+                    
+                    if query == None:
+                        # Adding suggestion to DB
+                        new_suggestion = Suggestion(article_id, task_id, round((1-distance),2), 'task')
+                        db.session.add(new_suggestion)
+                        db.session.commit()
+                        suggestionFlag = True
+        
+        # If suggestions calculated check db to see if write back done previously
+        # In event no writeback has been previously done use rest API to add comment 
+        if(suggestionFlag == True):
+            # query = WriteBack.query.filter(WriteBack.ticket_ref==ticket_ref).first()
             if query == None:
                 # write_back_API(ticket_ref)
                 # TODO enable write back again 

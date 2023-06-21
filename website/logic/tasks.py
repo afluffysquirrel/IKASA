@@ -60,12 +60,12 @@ def task(id):
         return redirect(url_for('tasks.tasks'))
     else:
         query = db.session.query(Article, Task, Suggestion) \
-        .filter(Suggestion.article_id == Article.id, Suggestion.task_id == Task.id, Suggestion.task_id == task.id) \
+        .filter(Suggestion.article_id == Article.id, Suggestion.task_id == Task.id, Suggestion.task_id == task.id, Suggestion.ticket_ref==None) \
         .order_by(Suggestion.similarity.desc()).all()
 
         attachments = Attachment.query.filter(Attachment.task_id == id)
 
-        return render_template("task.html", user=current_user, task=task, query=iter([]), attachments=attachments)
+        return render_template("task.html", user=current_user, task=task, query=query, attachments=attachments)
     
 @tasksBluePrint.route('/delete/<id>', methods=['POST'])
 @login_required

@@ -36,8 +36,8 @@ def init_data():
             new_user_2 = User(
                 email="admin@email.com",
                 password="sha256$fQBYKzsb8r2XZl0h$9f73104475986e7f385c80238ee77f0eb6a950bcfe0111bff405a086aa922d26",
-                first_name="test",
-                last_name="account"
+                first_name="Admin",
+                last_name="User"
             )
             new_user_2.admin_flag = True
             new_user_2.approved_flag = True
@@ -97,5 +97,9 @@ def init_data():
         if task == None:
             user = User.query.first()
             new_task = Task('Finish developing IKASA', 'Task description goes here', user, user, _datetime.date.today())
+            s.add(new_task)
+            s.commit()
+
+            new_task = Task('User password reset', 'This can be done via active directory', user, user, _datetime.date.today())
             s.add(new_task)
             s.commit()
