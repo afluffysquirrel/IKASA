@@ -108,7 +108,7 @@ def calculate_suggestions():
         # If suggestions calculated check db to see if write back done previously
         # In event no writeback has been previously done use rest API to add comment 
         if(suggestionFlag == True):
-            query = WriteBack.query.filter(WriteBack.ticket_ref==ticket_ref).first()
+            # query = WriteBack.query.filter(WriteBack.ticket_ref==ticket_ref).first()
             if query == None:
                 # write_back_API(ticket_ref)
                 # TODO enable write back again 

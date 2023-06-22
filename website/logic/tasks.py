@@ -92,7 +92,6 @@ def add_task():
     title = request.form.get('title')
     body = request.form.get('editor')
 
-    # TODO assigned to functionality and due date
     assigned_email = request.form.get('assigned')
     due_date = request.form.get('due')
 
@@ -107,7 +106,6 @@ def add_task():
     body = str(soup)
 
     # Get user object from DB
-    print(assigned_email)
     user = User.query.filter_by(email=assigned_email).first()
 
     if(due_date == ''):
